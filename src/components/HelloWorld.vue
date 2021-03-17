@@ -1,46 +1,115 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-typescript" target="_blank" rel="noopener">typescript</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router" target="_blank" rel="noopener">router</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-vuex" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-unit-mocha" target="_blank" rel="noopener">unit-mocha</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-e2e-cypress" target="_blank" rel="noopener">e2e-cypress</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    {{$t('message')}}
+    <div id="code" class="printer" ref="code"> test{{num}}
+      <img src="image/qrcode.png">
+      <div>这压根不好玩</div>
+    </div>
+    <img id="img">
+    <el-button type="primary" @click="start">开始发送</el-button>
+    <webview id="printWebview" ref="printWebview" :src="fullPath" nodeintegration />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import modbus, { Modbus } from 'modbus'
+import { WebviewTag } from 'electron'
+import path from 'path'
+import html2canvas from 'html2canvas'
 
 @Component
 export default class HelloWorld extends Vue {
-  @Prop() private msg!: string;
+  com: Modbus= modbus('COM7', 115200, 2);
+  timerHandle: NodeJS.Timeout | null = null;
+  private num = 0;
+  private fullPath = path.join(__static, 'print.html'); // eslint-disable-line
+  // private fullPath = 'http://localhost:8080/#about';
+  private mounted () {
+    const webview = (this.$refs.printWebview as WebviewTag)
+
+    // const loadstart = () => {
+    //   // indicator.innerText = 'loading...'
+    //   this.$message('loading...')
+    // }
+
+    // const loadstop = () => {
+    //   this.$message('loaded')
+    // }
+
+    // webview.addEventListener('did-start-loading', loadstart)
+    // webview.addEventListener('did-stop-loading', loadstop)
+    webview.addEventListener('ipc-message', (event) => {
+      if (event.channel === 'webview-print-do') {
+        console.log('ZDesigner GX420d')
+        webview.print({
+          silent: true,
+          dpi: {
+            horizontal: 203,
+            vertical: 203
+          },
+          printBackground: true,
+          deviceName: 'ZDesigner GX420d'
+        })
+      }
+    })
+  }
+
+  private start () {
+    if (this.$i18n.locale === 'zh') this.$i18n.locale = 'en'
+    else this.$i18n.locale = 'zh'
+
+    // 获取<webview>节点
+    // const webview = (this.$refs.printWebview as WebviewTag)
+    //   html2canvas(this.$refs.code as HTMLElement, {allowTaint: true,useCORS:true}).then((canvas:HTMLCanvasElement) => {
+    //     // 发送信息到<webview>里的页面
+    //     this.num++;
+    //     console.log(webview);
+    //     webview.send('webview-print-render', {
+    //       printName: 'ZDesigner GX420d',
+    //       html: canvas.toDataURL(),
+    //       width: canvas.width,
+    //       height: canvas.height,
+    //     })
+    //     let oImg = new Image();
+    //     oImg.src = canvas.toDataURL();  // 导出图片
+    //     document.getElementById('img')?.appendChild(oImg);  // 将生成的图片添加到body
+    //   })
+    const webview = (this.$refs.printWebview as WebviewTag)
+    const code = this.$refs.code
+    if (code) {
+      console.log(code)
+      html2canvas(code as HTMLElement, { useCORS: true }).then(function (canvas) {
+        // let oImg = new Image();
+        // oImg.src = canvas.toDataURL();  // 导出图片
+        // document.getElementById('img')?.appendChild(oImg);  // 将生成的图片添加到body
+        const img = document.getElementById('img') as HTMLImageElement
+        if (img) {
+          img.width = canvas.width
+          img.height = canvas.height
+          img.src = canvas.toDataURL('image/jpeg', 1.0)
+        }
+        webview.send('webview-print-render', {
+          printName: 'ZDesigner GX420d',
+          html: canvas.toDataURL(),
+          width: canvas.width,
+          height: canvas.height
+        })
+      })
+    }
+
+    // this.timerHandle && clearInterval(this.timerHandle)
+    // this.timerHandle = setInterval(()=>{
+    //   this.com.read('c8', (err:Error|null, res:any) => {
+    //     if(!!err) console.log(err.message);
+    //     console.log(res);
+    //   })
+    //   this.com.read('hr', (err:Error|null, res:any) => {
+    //     if(!!err) console.log(err.message);
+    //     console.log(res);
+    //   })
+    // }, 5000)
+  }
 }
 </script>
 
@@ -59,5 +128,10 @@ li {
 }
 a {
   color: #42b983;
+}
+.printer{
+  font-weight: bold;
+  padding-left: 250px;
+  text-align: left;
 }
 </style>
