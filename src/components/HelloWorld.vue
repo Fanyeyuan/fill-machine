@@ -1,13 +1,19 @@
 <template>
   <div class="hello">
-    {{$t('message')}}
-    <div id="code" class="printer" ref="code"> test{{num}}
-      <img src="image/qrcode.png">
+    {{ $t("message") }}
+    <div id="code" class="printer" ref="code">
+      test{{ num }}
+      <img src="image/qrcode.png" />
       <div>这压根不好玩</div>
     </div>
-    <img id="img">
+    <img id="img" />
     <el-button type="primary" @click="start">开始发送</el-button>
-    <webview id="printWebview" ref="printWebview" :src="fullPath" nodeintegration />
+    <webview
+      id="printWebview"
+      ref="printWebview"
+      :src="fullPath"
+      nodeintegration
+    />
   </div>
 </template>
 
@@ -18,15 +24,38 @@ import { WebviewTag } from 'electron'
 import path from 'path'
 import html2canvas from 'html2canvas'
 
+import sq3 from 'sqlite3'
+// 注意'\src\renderer\utils\MyDatabase.db'为我自己的路径，需切换成你自己使用的路径
+const sqlite3 = sq3.verbose()
+const db = new sqlite3.Database(':memory:')
+
+db.serialize(function () {
+  db.run('CREATE TABLE lorem (info TEXT)')
+
+  const stmt = db.prepare('INSERT INTO lorem VALUES (?)')
+  for (let i = 0; i < 10; i++) {
+    stmt.run('Ipsum ' + i)
+  }
+  stmt.finalize()
+
+  db.each(
+    'SELECT rowid AS id, info FROM lorem',
+    function (err: Error, row: any) {
+      console.log(err.message, row.id + ': ' + row.info)
+    }
+  )
+})
+
+db.close()
 @Component
 export default class HelloWorld extends Vue {
-  com: Modbus= modbus('COM7', 115200, 2);
+  // com: Modbus = modbus("COM7", 115200, 2);
   timerHandle: NodeJS.Timeout | null = null;
   private num = 0;
-  private fullPath = path.join(__static, 'print.html'); // eslint-disable-line
+  private fullPath = path.join(__static, "print.html"); // eslint-disable-line
   // private fullPath = 'http://localhost:8080/#about';
   private mounted () {
-    const webview = (this.$refs.printWebview as WebviewTag)
+    const webview = this.$refs.printWebview as WebviewTag
 
     // const loadstart = () => {
     //   // indicator.innerText = 'loading...'
@@ -75,11 +104,13 @@ export default class HelloWorld extends Vue {
     //     oImg.src = canvas.toDataURL();  // 导出图片
     //     document.getElementById('img')?.appendChild(oImg);  // 将生成的图片添加到body
     //   })
-    const webview = (this.$refs.printWebview as WebviewTag)
+    const webview = this.$refs.printWebview as WebviewTag
     const code = this.$refs.code
     if (code) {
       console.log(code)
-      html2canvas(code as HTMLElement, { useCORS: true }).then(function (canvas) {
+      html2canvas(code as HTMLElement, { useCORS: true }).then(function (
+        canvas
+      ) {
         // let oImg = new Image();
         // oImg.src = canvas.toDataURL();  // 导出图片
         // document.getElementById('img')?.appendChild(oImg);  // 将生成的图片添加到body
@@ -129,7 +160,7 @@ li {
 a {
   color: #42b983;
 }
-.printer{
+.printer {
   font-weight: bold;
   padding-left: 250px;
   text-align: left;
