@@ -2,6 +2,7 @@
   "name": "fill-machine",
   "version": "0.1.0",
   "private": true,
+  "provider": "flight",
   "scripts": {
     "start": "vue-cli-service electron:serve",
     "serve": "vue-cli-service serve",
@@ -74,5 +75,6 @@
       "vue-cli-service lint",
       "git add"
     ]
-  }
+  },
+  "repository": "github:Fanyeyuan/fill-machine"
 }

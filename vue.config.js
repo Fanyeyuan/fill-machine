@@ -5,6 +5,7 @@ module.exports = {
       externals: ['serialport'],
       nodeModulesPath: ['../../node_modules', './node_modules'],
       builderOptions: {
+        nsis: {},
         publish: ['github']
       }
     }
