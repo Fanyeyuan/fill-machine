@@ -1,11 +1,11 @@
-declare global{
-  // interface Window{
-  // }
+// declare global{
+//   interface Window{
+//   }
 
-  // namespace NodeJS {
-  //   interface Global {
-  //   }
-  // }
-}
+//   namespace NodeJS {
+//     interface Global {
+//     }
+//   }
+// }
 
 declare const __static: string

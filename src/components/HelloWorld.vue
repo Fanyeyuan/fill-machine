@@ -20,7 +20,7 @@ import html2canvas from 'html2canvas'
 
 @Component
 export default class HelloWorld extends Vue {
-  com: Modbus= modbus('COM7', 115200, 2);
+  // com: Modbus= modbus('COM7', 115200, 2);
   timerHandle: NodeJS.Timeout | null = null;
   private num = 0;
   private fullPath = path.join(__static, 'print.html'); // eslint-disable-line
