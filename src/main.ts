@@ -7,16 +7,19 @@ import Element from 'element-ui'
 import enLocale from 'element-ui/lib/locale/lang/en'
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 
+import zh from '@/app/language/zh'
+import en from '@/app/language/en'
+
 Vue.use(VueI18n)
 
 const messages = {
   en: {
-    message: 'hello',
-    ...enLocale // 或者用 Object.assign({ message: 'hello' }, enLocale)
+    local: en,
+    ...enLocale
   },
   zh: {
-    message: '你好',
-    ...zhLocale // 或者用 Object.assign({ message: '你好' }, zhLocale)
+    local: zh,
+    ...zhLocale
   }
 }
 const i18n = new VueI18n({

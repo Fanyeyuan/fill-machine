@@ -1,13 +1,35 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+    <heads v-if="!isLoginPage"></heads>
+    <navs></navs>
     <router-view/>
+    <foot v-if="!isLoginPage"></foot>
   </div>
 </template>
 
+<script lang="ts">
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import foot from '@/components/main/Foot.vue'
+import heads from '@/components/main/Head.vue'
+import navs from '@/components/main/Nav.vue'
+
+  @Component({
+    components: {
+      foot, heads, navs
+    }
+  })
+export default class App extends Vue {
+    private isLoginPage = false;
+    @Watch('$route.path')
+    private getRouteChange () {
+      if (this.$route.path === '/login') {
+        this.isLoginPage = true
+      } else {
+        this.isLoginPage = false
+      }
+    }
+}
+</script>
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -20,18 +42,5 @@
 *{
   padding: 0;
   margin: 0;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
 }
 </style>
