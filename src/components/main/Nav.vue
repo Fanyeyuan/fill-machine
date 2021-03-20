@@ -1,12 +1,12 @@
 <template>
   <div>
     <div id="nav">
-      <router-link to="/">{{ $t('local.nav.home')}}</router-link> |
-      <router-link to="/ready">{{ $t('local.nav.ready')}}</router-link> |
-      <router-link to="/qrcode">{{ $t('local.nav.qrcode')}}</router-link> |
-      <router-link to="/setting">{{ $t('local.nav.setting')}}</router-link> |
-      <router-link to="/log">{{ $t('local.nav.log')}}</router-link>
-      <router-link to="/login">登陆</router-link>
+        <span ></span>
+      <router-link v-t="{path:'local.nav.home'}" to="/"></router-link> |
+      <router-link v-t="{path:'local.nav.ready'}" to="/ready"></router-link> |
+      <router-link v-t="{path:'local.nav.qrcode'}" to="/qrcode"></router-link> |
+      <router-link v-t="{path:'local.nav.setting'}" to="/setting"></router-link> |
+      <router-link v-t="{path:'local.nav.log'}" to="/log"></router-link>
     </div>
   </div>
 </template>
@@ -22,7 +22,7 @@ export default class Nav extends Vue {
 
 <style lang="scss" scoped>
 #nav {
-  padding: 30px;
+  padding-top: 30px;
 
   a {
     font-weight: bold;

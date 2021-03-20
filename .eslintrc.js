@@ -14,7 +14,8 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-explicit-any': ['off'],
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    '@typescript-eslint/camelcase': [1, { allow: ['aa_bb'] }]
   },
   overrides: [
     {

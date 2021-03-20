@@ -49,4 +49,18 @@ const router = new VueRouter({
   routes
 })
 
+router.beforeEach((to, from, next) => {
+  const store = router.app.$store
+  if (to.path !== '/login' && process.env.NODE_ENV === 'production') {
+    if (!store || !store.state.user.username) {
+      // console.log(store.state, !store.state.user.username)
+      next('/login')
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
+
 export default router

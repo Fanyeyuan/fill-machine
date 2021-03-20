@@ -6,7 +6,7 @@ function obj2str (obj: { [key: string]: any }, con: string) {
   const keys = Object.keys(obj)
   let str = ''
   for (let i = 0; i < keys.length; i++) {
-    str += `${keys[i]} = ? ${i + 1 === keys.length ? '' : con} `
+    str += `${keys[i]} = ? ${i + 1 === keys.length ? '' : con}`
   }
   return str
 }
@@ -20,7 +20,7 @@ function obj2str2 (obj: { [key: string]: any }, con: string) {
         i + 1 === keys.length ? '' : con
       } `
     } else if (!(obj[keys[i]] instanceof Object)) {
-      str += `${keys[i]} = ${obj[keys[i]]} ${
+      str += `${keys[i]} = "${obj[keys[i]]}" ${
         i + 1 === keys.length ? '' : con
       } `
     }
@@ -29,26 +29,15 @@ function obj2str2 (obj: { [key: string]: any }, con: string) {
 }
 
 enum tables {
-  device = 'xph_device',
-  facType = 'xph_fac_type',
-  element = 'xph_element',
-  log = 'xph_log',
-  logControl = 'xph_log_control',
-  logLoraSignal = 'xph_log_lora_signal',
-  relay = 'xph_relay',
-  reals = 'xph_reals',
-  history = 'xph_history',
-
-  crop = 'xph_crop',
-  fer = 'xph_fer',
-  group = 'xph_group',
-  groupDevice = 'xph_group_device',
-  turnRecord = 'xph_turn_record',
-  turnContent = 'xph_turn_content',
-  turnFer = 'xph_turn_fer',
-
-  sqliteSequence = 'sqlite_sequence'
+  com = 'com',
+  logs = 'logs',
+  param = 'param',
+  print = 'print',
+  qrcode = 'qr_code',
+  user = 'user',
+  worker = 'woker'
 }
+
 const dbPath = path.join(__static, '../static/db.db')
 log.info(__dirname, __static)
 const db = new sqlite3.Database(dbPath)
@@ -67,9 +56,9 @@ const get = (
   obj: { [key: string]: any },
   op = 'and'
 ): Promise<any> => {
-  const values = Object.values(obj)
+  // const values = Object.values(obj)
   const flag = obj2str2(obj, op)
-  const sql = 'select * from ' + tableName + ' where ' + flag
+  const sql = `select * from  ${tableName} where ${flag};`
   log.silly(sql)
   return new Promise((resolve, reject) => {
     db.get(sql, (err: Error, row: any) => {
@@ -93,7 +82,7 @@ const all = (
   if (obj) {
     const values = Object.values(obj)
     const flag = obj2str2(obj, op)
-    sql = 'select * from ' + tableName + ' where ' + flag
+    sql = `select * from  ${tableName} where ${flag};`
     log.silly(sql, values)
     return new Promise((resolve, reject) => {
       db.all(sql, (err: Error, row: any) => {
@@ -129,7 +118,7 @@ const insert = (
   )})`
   log.silly(sql)
   return new Promise((resolve, reject) => {
-    function call (this: any, err: Error, row: any) {
+    function call (this: any, err: Error) {
       !err ? resolve(this.lastID) : reject(err)
     }
     if (data) {
@@ -194,7 +183,7 @@ const update = (
   const values = Object.values(data).concat(Object.values(condition))
   return new Promise((resolve, reject) => {
     if (data) {
-      db.run(sql, values, function (this: any, err: Error, row: any) {
+      db.run(sql, values, function (this: any, err: Error) {
         !err ? resolve(this.changes) : reject(err)
       })
     } else {
@@ -211,12 +200,12 @@ const update = (
  */
 const del = (tableName: tables, obj?: { [key: string]: any }, op = 'and') => {
   if (obj) {
-    const values = Object.values(obj)
+    // const values = Object.values(obj)
     const flag = obj2str2(obj, op)
     const sql = 'delete from ' + tableName + ' where ' + flag
     log.silly(sql)
     return new Promise((resolve, reject) => {
-      function call (this: any, err: Error, row: any) {
+      function call (this: any, err: Error) {
         !err ? resolve(this.changes) : reject(err)
       }
       db.all(sql, call)
@@ -228,7 +217,7 @@ const del = (tableName: tables, obj?: { [key: string]: any }, op = 'and') => {
     log.silly(sql)
     db.run(sql)
     return new Promise((resolve, reject) => {
-      function call (this: any, err: Error, row: any) {
+      function call (this: any, err: Error) {
         !err ? resolve(this.changes) : reject(err)
       }
       db.run('delete from ' + tableName, (err: Error) => {
