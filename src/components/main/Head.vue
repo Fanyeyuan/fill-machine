@@ -1,18 +1,20 @@
 <template>
-  <div class="header">
-    <div class="left">
-      <span>{{getCurrentTime}}</span>
-      <span>GB1000Pro 全自动精液灌装机</span>
-    </div>
-    <div class="right">
-      <span>
-        <i class="el-icon-user-solid"></i>
-        <span>ID: 0001</span>
-      </span>
-      <span @click="logout">
-        <i class="el-icon-circle-close"></i>
-        <span v-t="{path:'local.main.loginOut'}"></span>
-      </span>
+  <div>
+    <div class="header">
+      <div class="left">
+        <span class="time">{{getCurrentTime}}</span>
+        <span class="machine">GB1000Pro 全自动精液灌装机</span>
+      </div>
+      <div class="right">
+        <span class="user">
+          <i class="el-icon-user-solid"></i>
+          <span>ID: 0001</span>
+        </span>
+        <span class="logout" @click="logout">
+          <i class="el-icon-circle-close"></i>
+          <span v-t="{path:'local.main.logout'}"></span>
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -64,20 +66,69 @@ export default class Head extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.header{
-  position: fixed;
-  top: 0;
-  left: 0;
-  border-bottom: 1px solid yellow;
-  width: 100%;
+div.header {
   text-align: center;
   overflow: hidden;
+  padding: 0 35px;
 
-  .left{
+  div.left {
     float: left;
+    span.time {
+      width: 147px;
+      font-size: 12px;
+      font-family: "Microsoft YaHei";
+      font-weight: 400;
+      padding-right: 16px;
+    }
+
+    span.machine {
+      width: 217px;
+      height: 20px;
+      font-size: 12px;
+      font-weight: 400;
+    }
   }
-  .right{
+
+  div.right {
     float: right;
+    color: #BD5413;
+    span.user {
+      cursor: pointer;
+      width: 102px;
+      height: 27px;
+      border: 1px solid #EEEEEE;
+      opacity: 0.53;
+      border-radius: 10px;
+      margin-right: 17px;
+      i.el-icon-user-solid {
+
+      }
+
+      span {
+        font-size: 16px;
+        font-family: "Microsoft YaHei";
+        font-weight: 400;
+        line-height: 7px;
+      }
+    }
+
+    span.logout {
+      cursor: pointer;
+      width: 102px;
+      height: 27px;
+      border: 1px solid #EEEEEE;
+      opacity: 0.53;
+      border-radius: 10px;
+      i.el-icon-circle-close {
+      }
+
+      span {
+        font-size: 16px;
+        font-family: Microsoft YaHei;
+        font-weight: 400;
+        line-height: 7px;
+      }
+    }
   }
 }
 </style>

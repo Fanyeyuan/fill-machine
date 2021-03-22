@@ -7,7 +7,8 @@ export default {
     log: '操作日志'
   },
   main: {
-    loginOut: '退出登陆',
+    logout: '退出登陆',
+    copyright: '版权所有：武汉天楚吉因宝生物科技有限公司',
     remind: {
       logoutConfirmInfo: '是否退出登陆?',
       info: '提示',
@@ -55,6 +56,12 @@ export default {
     ydxh: '移袋循环',
     gzxh: '灌装循环',
     sdtb: '手动贴标'
+  },
+  login: {
+    username: '登录账户',
+    password: '登录密码',
+    login: '登   录',
+    exit: '退出登录'
   },
   common: {
   }

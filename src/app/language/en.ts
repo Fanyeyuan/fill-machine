@@ -7,7 +7,7 @@ export default {
     log: 'Opation'
   },
   main: {
-    loginOut: 'logout',
+    logout: 'logout',
     logoutConfirmInfo: 'logout?'
   },
   home: {

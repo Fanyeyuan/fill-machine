@@ -1,12 +1,11 @@
 <template>
   <div>
     <div id="nav">
-        <span ></span>
-      <router-link v-t="{path:'local.nav.home'}" to="/"></router-link> |
-      <router-link v-t="{path:'local.nav.ready'}" to="/ready"></router-link> |
-      <router-link v-t="{path:'local.nav.qrcode'}" to="/qrcode"></router-link> |
-      <router-link v-t="{path:'local.nav.setting'}" to="/setting"></router-link> |
-      <router-link v-t="{path:'local.nav.log'}" to="/log"></router-link>
+      <router-link class="ceil" v-t="{path:'local.nav.home'}" to="/"></router-link>
+      <router-link class="ceil" v-t="{path:'local.nav.ready'}" to="/ready"></router-link>
+      <router-link class="ceil" v-t="{path:'local.nav.qrcode'}" to="/qrcode"></router-link>
+      <router-link class="ceil" v-t="{path:'local.nav.setting'}" to="/setting"></router-link>
+      <router-link class="ceil" v-t="{path:'local.nav.log'}" to="/log"></router-link>
     </div>
   </div>
 </template>
@@ -22,14 +21,38 @@ export default class Nav extends Vue {
 
 <style lang="scss" scoped>
 #nav {
-  padding-top: 30px;
+  height: 48px;
+  border-top: 1px solid #BD5413;
+  border-bottom: 1px solid #BD5413;
+  text-align: center;
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+  .ceil{
+    width: 142px;
+    height: 49px;
+    margin: 0 2px;
+    font-size: 18px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    // background-color: yellow;
+    color: #051921;
+    border-radius: 5px;
+    line-height: 48px;
+    display: inline-block;
+    background-image: linear-gradient(to top, #cf5a0f, #fff9a9);
+    text-decoration: none;
 
     &.router-link-exact-active {
-      color: #42b983;
+      position: relative;
+      &::after{
+      content: "";
+      width: 69px;
+      height: 5px;
+      background: #fff;
+      border-radius: 3px;
+      position: absolute;
+      bottom: 0;
+      left: 37px;
+    }
     }
   }
 }

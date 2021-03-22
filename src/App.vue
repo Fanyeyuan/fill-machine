@@ -1,9 +1,11 @@
 <template>
   <div id="app">
-    <heads v-if="!isLoginPage"></heads>
-    <navs v-if="!isLoginPage"></navs>
+    <div class="header" v-if="!isLoginPage">
+      <heads></heads>
+      <navs></navs>
+    </div>
     <router-view/>
-    <foot v-if="!isLoginPage"></foot>
+    <foot class="foot"></foot>
   </div>
 </template>
 
@@ -30,16 +32,21 @@ export default class App extends Vue {
     }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 #app {
+  width: 100%;
+  height: 100vh;
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-}
+  // -webkit-font-smoothing: antialiased;
+  // -moz-osx-font-smoothing: grayscale;
 
-*{
-  padding: 0;
-  margin: 0;
+  .header{
+  }
+  .foot{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
 }
 </style>
