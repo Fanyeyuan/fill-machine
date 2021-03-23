@@ -1,11 +1,17 @@
 <template>
   <div id="app">
-    <div class="header" v-if="!isLoginPage">
-      <heads></heads>
-      <navs></navs>
+    <video v-if="!isStart" id="video" width="800" height="600" autoplay>
+      <source src="/video/logo.mp4" type="video/mp4">
+      您的浏览器不支持Video标签。
+    </video>
+    <div id="content" v-if="isStart">
+      <div class="header" v-if="!isLoginPage">
+        <heads></heads>
+        <navs></navs>
+      </div>
+      <router-view/>
+      <foot class="foot"></foot>
     </div>
-    <router-view/>
-    <foot class="foot"></foot>
   </div>
 </template>
 
@@ -21,15 +27,26 @@ import navs from '@/components/main/Nav.vue'
     }
   })
 export default class App extends Vue {
-    private isLoginPage = false;
-    @Watch('$route.path')
-    private getRouteChange () {
-      if (this.$route.path === '/login') {
-        this.isLoginPage = true
-      } else {
-        this.isLoginPage = false
-      }
+  private isLoginPage = false;
+  private isStart = process.env.NODE_ENV !== 'production';
+  created () {
+    console.log(this.isLoginPage, this.isStart)
+
+    let timehander: any = setTimeout(() => {
+      this.isStart = true
+      clearTimeout(timehander)
+      timehander = null
+    }, 4500)
+  }
+
+  @Watch('$route.path', { immediate: true })
+  private getRouteChange () {
+    if (this.$route.path === '/login') {
+      this.isLoginPage = true
+    } else {
+      this.isLoginPage = false
     }
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -40,13 +57,17 @@ export default class App extends Vue {
   // -webkit-font-smoothing: antialiased;
   // -moz-osx-font-smoothing: grayscale;
 
-  .header{
-  }
-  .foot{
-    position: fixed;
-    bottom: 0;
-    left: 0;
+  #content{
     width: 100%;
+    height: 100%;
+    .header{
+    }
+    .foot{
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
   }
 }
 </style>

@@ -49,7 +49,6 @@ export default class Login extends Vue {
     width: 255px;
     height: 178px;
     // border: 1px solid #002E73;
-    opacity: 0.53;
     border-radius: 10px;
     background-color: #fff0c4;
 
@@ -58,6 +57,7 @@ export default class Login extends Vue {
     left: 479px;
 
     .input{
+      opacity: 0.53;
       padding: 35px 14px;
       .username{
         padding-bottom: 31px;

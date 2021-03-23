@@ -24,6 +24,8 @@ export default {
     work: '工作信息显示',
     dfgzl: '单份罐装量',
     jhgzfs: '计划罐装份数',
+    fenshu: '份',
+    gzys: '罐装用时',
     sjgzfs: '实际罐装份数',
     fksjwd: '封口实际温度',
     dabiao: '打标',

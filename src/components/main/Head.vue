@@ -11,7 +11,7 @@
           <span>ID: 0001</span>
         </span>
         <span class="logout" @click="logout">
-          <i class="el-icon-circle-close"></i>
+          <i class="el-icon-switch-button"></i>
           <span v-t="{path:'local.main.logout'}"></span>
         </span>
       </div>
@@ -67,9 +67,11 @@ export default class Head extends Vue {
 
 <style lang="scss" scoped>
 div.header {
+  height: 31px;
   text-align: center;
   overflow: hidden;
   padding: 0 35px;
+  line-height: 32px;
 
   div.left {
     float: left;
@@ -84,7 +86,7 @@ div.header {
     span.machine {
       width: 217px;
       height: 20px;
-      font-size: 12px;
+      font-size: 20px;
       font-weight: 400;
     }
   }
@@ -92,16 +94,19 @@ div.header {
   div.right {
     float: right;
     color: #BD5413;
-    span.user {
+    > span{
       cursor: pointer;
+      padding: 9px;
       width: 102px;
       height: 27px;
       border: 1px solid #EEEEEE;
       opacity: 0.53;
-      border-radius: 10px;
+      border-radius: 15px;
+    }
+    span.user {
       margin-right: 17px;
       i.el-icon-user-solid {
-
+        margin-right: 8px;
       }
 
       span {
@@ -113,13 +118,11 @@ div.header {
     }
 
     span.logout {
-      cursor: pointer;
-      width: 102px;
-      height: 27px;
-      border: 1px solid #EEEEEE;
-      opacity: 0.53;
-      border-radius: 10px;
-      i.el-icon-circle-close {
+      i {
+        margin-right: 8px;
+        background-color: #bd5413;
+        color: white;
+        border-radius: 2px;
       }
 
       span {

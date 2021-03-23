@@ -38,8 +38,10 @@ export default class Nav extends Vue {
     border-radius: 5px;
     line-height: 48px;
     display: inline-block;
-    background-image: linear-gradient(to top, #cf5a0f, #fff9a9);
+    // background-image: linear-gradient(to top, #cf5a0f, #fff9a9);
     text-decoration: none;
+    background: url("~@/assets/image/base64/navback.png") no-repeat center;
+    background-size: cover;
 
     &.router-link-exact-active {
       position: relative;
@@ -50,7 +52,7 @@ export default class Nav extends Vue {
       background: #fff;
       border-radius: 3px;
       position: absolute;
-      bottom: 0;
+      bottom: 3px;
       left: 37px;
     }
     }
