@@ -11,6 +11,9 @@ import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 import zh from '@/app/language/zh'
 import en from '@/app/language/en'
 
+// 自定义 icon
+import './assets/icon/self/style.css'
+
 Vue.use(VueI18n)
 
 const messages = {
