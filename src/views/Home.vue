@@ -45,7 +45,7 @@
                   1560
                   <span v-t="{path:'local.home.fenshu'}"></span>
                 </div>
-                <checkboxs class="checkboxs" :value="clear" @change="clearClick()" ckStyle="checked" unStyle="unchecked" label="清空"></checkboxs>
+                <checkboxs class="checkboxs" :value="clear" @change="clearClick()" ckStyle="checked" unStyle="unchecked" :label="$t('local.home.clear')"></checkboxs>
               </div>
             </block>
           </el-col>
@@ -54,8 +54,8 @@
           <el-col :span="12">
             <block class="ceil" :title="$t('local.home.dabiao')">
               <div class="dabiao">
-                <checkboxs :value="checked" @change="dabiaoClick(true)" ckStyle="checked" unStyle="unchecked" label="确定"></checkboxs>
-                <checkboxs :value="!checked" @change="dabiaoClick(false)" ckStyle="checked" unStyle="unchecked" label="取消"></checkboxs>
+                <checkboxs :value="checked" @change="dabiaoClick(true)" ckStyle="checked" unStyle="unchecked" :label="$t('local.home.confirm')"></checkboxs>
+                <checkboxs :value="!checked" @change="dabiaoClick(false)" ckStyle="checked" unStyle="unchecked" :label="$t('local.home.cancel')"></checkboxs>
               </div>
             </block>
           </el-col>

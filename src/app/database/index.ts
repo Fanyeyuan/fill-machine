@@ -179,8 +179,8 @@ const update = (
   const set = obj2str(data, ',')
   const flag = obj2str(condition, op)
   const sql = `update ${tableName} set ${set} where ${flag}`
-  log.silly(sql)
   const values = Object.values(data).concat(Object.values(condition))
+  log.silly(sql, values)
   return new Promise((resolve, reject) => {
     if (data) {
       db.run(sql, values, function (this: any, err: Error) {

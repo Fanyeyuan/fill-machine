@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="block">
-      <div class="title">{{title}}</div>
+      <div class="title">
+        <span v-if="title">{{ title }}</span>
+        <slot v-else name="title"></slot>
+      </div>
       <slot></slot>
     </div>
   </div>
@@ -10,19 +13,19 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-  @Component
+@Component
 export default class Blocks extends Vue {
-    @Prop({ type: String, required: true }) title?: string;
+  @Prop({ type: String }) title?: string;
 }
 </script>
 
 <style lang="scss" scoped>
-.block{
+.block {
   background-color: #dddfe6;
-  border: 1px solid #E8C537;
+  border: 1px solid #e8c537;
   border-radius: 5px;
   height: 100%;
-  .title{
+  .title {
     padding: 10px;
     font-size: 20px;
     font-family: Microsoft YaHei;

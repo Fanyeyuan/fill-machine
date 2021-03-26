@@ -1,12 +1,20 @@
 import * as db from '../index'
 
+interface UserParam{
+  id?: number;
+  username: string; // 用户名
+  password: string; // 用户密码
+  is_admin?: boolean; // 是否为管理员
+}
+
 export default class User {
   id?: number;
   username: string; // 用户名
   password: string; // 用户密码
   is_admin?: boolean; // 是否为管理员
 
-  constructor (param: User) {
+  constructor (param: UserParam) {
+    param.id && (this.id = param.id)
     this.username = param.username
     this.password = param.password
     param.is_admin ? (this.is_admin = param.is_admin) : (this.is_admin = false)
@@ -39,7 +47,7 @@ export default class User {
     // })
   }
 
-  update (param: User) {
+  update (param: UserParam) {
     return db.update(db.tables.user, param, { id: this.id }).then(value => {
       return value as number
     })

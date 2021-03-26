@@ -60,7 +60,7 @@ export default class Login extends Vue {
       opacity: 0.53;
       padding: 35px 14px;
       .username{
-        padding-bottom: 31px;
+        margin-bottom: 31px;
       }
 
       input{

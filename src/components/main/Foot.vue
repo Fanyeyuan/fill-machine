@@ -3,8 +3,8 @@
     <div class="footer">
       <div class="left" v-t="{path:'local.main.copyright'}"></div>
       <div class="right">
-        <span @click="changeChinese">中文</span> |
-        <span @click="changeEnglish">ENGLISH</span>
+        <span @click="changeChinese" :class="{active: activeChinese}">中文</span> |
+        <span @click="changeEnglish" :class="{active: activeEnglish}">ENGLISH</span>
       </div>
     </div>
   </div>
@@ -21,6 +21,14 @@ export default class Foot extends Vue {
 
   private changeEnglish () {
     if (this.$i18n.locale !== 'en') { this.$i18n.locale = 'en' }
+  }
+
+  private get activeChinese () {
+    return this.$i18n.locale === 'zh'
+  }
+
+  private get activeEnglish () {
+    return this.$i18n.locale === 'en'
   }
 }
 </script>
@@ -59,14 +67,18 @@ export default class Foot extends Vue {
       font-weight: 400;
       color: #FFFFFF;
       line-height: 24px;
+        background: #787878;
 
-      &:first-of-type{
-        background: #D69628;
-      }
+      // &:first-of-type{
+      //   background: #D69628;
+      // }
       &:last-of-type{
         font-style: italic;
-        background: #787878;
       }
+    }
+
+    .active{
+      background: #D69628;
     }
   }
 }

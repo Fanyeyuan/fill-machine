@@ -6,6 +6,12 @@ module.exports = {
       nodeModulesPath: ['../../node_modules', './node_modules'],
       builderOptions: {
         nsis: {},
+        extraResources: [
+          {
+            from: './static',
+            to: 'static'
+          }
+        ],
         publish: ['github']
       }
     }

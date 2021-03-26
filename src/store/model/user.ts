@@ -1,5 +1,6 @@
 import { Commit } from 'vuex'
 const state = {
+  id: 0,
   username: '',
   password: '',
   is_admin: false
@@ -7,6 +8,7 @@ const state = {
 
 const mutations = {
   saveInfo (states: typeof state, params: typeof state) {
+    states.id = params.id || 0
     states.username = params.username
     states.password = params.password
     states.is_admin = params.is_admin

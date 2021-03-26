@@ -10,34 +10,35 @@
       html {
         padding: 0;
         margin: 0;
+        font-family: Avenir, Helvetica, Arial, sans-serif;
       }
 
       @page {
-        margin: 0px;
+        margin: 0 0 0 14px;
       }
-
-      .div1 {
-        overflow: hidden;
-      }
+      .table{width:259px;height:145px;border:1px solid #000000}
+      .table .company{height:16px;font-family:Microsoft YaHei;font-weight:bold;color:#000000;font-size:12px;line-height:16px;text-align:center;padding:1px;border-bottom:1px solid #000000}
+      .table .content{overflow:hidden}
+      .table .content .left{float:left;border-right:1px solid #000}
+      .table .content .left .message{width:166px;height:25px;border-bottom:1px solid #000000}
+      .table .content .left .message:last-of-type{border:0}
+      .table .content .left .message span{display:inline-block;box-sizing:border-box}
+      .table .content .left .message span:first-of-type{width:64px;font-size:12px;line-height:25px;font-weight:bold;padding:2px 6px}
+      .table .content .left .message span:last-of-type{width:102px;vertical-align:middle;font-size:10px;font-weight:400;text-align:inherit;word-break:break-all;}
+      .table .content .right{float:right}
+      .table .content .right .qrcode{margin:17px 0;width:92px;height:92px;background-color:black}
     </style>
   </head>
 
   <body>
-    
-    <img id="bd" >测试进行中
+    <div data-v-99971692="" class="table"><div data-v-99971692="" class="company">沙雕1号</div><div data-v-99971692="" class="content"><div data-v-99971692="" class="left"><div data-v-99971692="" class="message"><span data-v-99971692="">公猪编号:</span><span data-v-99971692="">AAAAA,BBBBB,CCCCC,DDDDD,EEEEE</span></div><div data-v-99971692="" class="message"><span data-v-99971692="">品种品系:</span><span data-v-99971692="">长白山1号</span></div><div data-v-99971692="" class="message"><span data-v-99971692="">生产日期:</span><span data-v-99971692="">2021-03-26 10:04:08</span></div><div data-v-99971692="" class="message"><span data-v-99971692="">有效日期:</span><span data-v-99971692="">2021-04-26 10:04:08</span></div><div data-v-99971692="" class="message"><span data-v-99971692="">规格密度:</span><span data-v-99971692="">60mL</span></div></div><div data-v-99971692="" class="right"><img data-v-99971692="" src="data:image/png;base64,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" class="qrcode"></div></div></div>
   </body>
 
   <script>
     const { ipcRenderer } = require('electron')
     ipcRenderer.on('webview-print-render', (event, info) => {
-      // const body = document.getElementById('bd')
-      // body.innerHTML = JSON.stringify(info)
-      // 执行渲染
-      const img = document.getElementById('bd')
-      img.width = info.width;
-      img.height = info.height;
-      img.src = info.html;
-      console.log(info);
+      // const body = document.getElementsByTagName('body')[0]
+      // body.innerHTML = info.html
       ipcRenderer.sendToHost('webview-print-do')
     })
   </script>

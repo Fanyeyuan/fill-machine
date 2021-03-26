@@ -13,13 +13,14 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow () {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: isDevelopment ? 800 : 1024,
+    height: isDevelopment ? 600 : 768,
     frame: false,
     fullscreen: !isDevelopment,
     resizable: false,
     autoHideMenuBar: true,
     webPreferences: {
+      zoomFactor: isDevelopment ? 1.0 : 1.28,
       webviewTag: true,
       // Required for Spectron testing
       enableRemoteModule: true,
