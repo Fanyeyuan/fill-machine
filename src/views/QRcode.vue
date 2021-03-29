@@ -2,7 +2,7 @@
   <div class="qrcode">
     <el-row :gutter="20">
       <el-col :span="12">
-        <block class="newTage">
+        <block class="newTage" iclass="tagTitle">
           <div slot="title" v-t="{ path: 'local.qrcode.newTag.title' }"></div>
           <div>
             <el-form
@@ -50,6 +50,8 @@
               >
                 <el-date-picker
                   type="datetime"
+                  class="content"
+                  :placeholder="$tc('local.qrcode.newTag.note.created')"
                   v-model="ruleForm.create_time"
                   style="width: 100%"
                 ></el-date-picker>
@@ -60,7 +62,8 @@
               >
                 <el-date-picker
                   type="datetime"
-                  placeholder="选择日期"
+                  class="content"
+                  :placeholder="$tc('local.qrcode.newTag.note.effective')"
                   v-model="ruleForm.effective"
                   style="width: 100%"
                 ></el-date-picker>
@@ -73,7 +76,7 @@
                   class="content"
                   clearable
                   type="textarea"
-                  :autosize="{ minRows: 2, maxRows: 4 }"
+                  :autosize="{ minRows: 3, maxRows: 3 }"
                   maxlength="150"
                   show-word-limit
                   resize="none"
@@ -84,6 +87,7 @@
               <!-- </el-form-item> -->
             </el-form>
             <div class="option">
+              <!-- <el-button type="primary" @click="test">打印</el-button> -->
               <el-button
                 type="primary"
                 @click="submitForm('ruleForm')"
@@ -98,7 +102,7 @@
         </block>
       </el-col>
       <el-col :span="12">
-        <block class="device">
+        <block class="device" iclass="tagTitle">
           <div slot="title" v-t="{ path: 'local.qrcode.device.title' }"></div>
           <div class="content">
             <div>
@@ -106,11 +110,10 @@
                 class="label"
                 v-t="{ path: 'local.qrcode.device.temp' }"
               ></div>
-              <div class="status"></div>
-              <div
-                class="button"
+              <div class="status">192℃</div>
+              <el-button
                 v-t="{ path: 'local.qrcode.device.right' }"
-              ></div>
+              ></el-button>
             </div>
             <div>
               <div
@@ -118,15 +121,14 @@
                 v-t="{ path: 'local.qrcode.device.print' }"
               ></div>
               <div class="status"></div>
-              <div
-                class="button"
+              <el-button
                 v-t="{ path: 'local.qrcode.device.search' }"
-              ></div>
+              ></el-button>
             </div>
           </div>
         </block>
 
-        <block class="module">
+        <block class="module" iclass="tagTitle">
           <div slot="title" v-t="{ path: 'local.qrcode.module.title' }"></div>
           <div class="content">
             <div>
@@ -261,12 +263,12 @@ export default class QRcode extends Vue {
 
   submitForm (formName: string) {
     (this.$refs[formName] as Form).validate((valid: boolean) => {
-      // if (valid) {
-      //   alert("submit!");
-      // } else {
-      //   console.log("error submit!!");
-      //   return false;
-      // }
+      if (valid) {
+        this.centerDialogVisible = true
+      } else {
+        console.log('error submit!!')
+        return false
+      }
     })
   }
 
@@ -282,45 +284,60 @@ export default class QRcode extends Vue {
 
 <style lang="scss">
 .qrcode {
-  padding: 20px 57px 22px 53px;
+  padding: 15px 57px 22px 53px;
 
   .newTage {
+    .tagTitle {
+      padding-left: 50px;
+      background: url("~@/assets/image/base64/图层 21.png") no-repeat 8px 3px;
+    }
+    .el-form {
+      margin: 5px 4px 18px;
+      background: #eeeff3;
+      border-radius: 5px;
+    }
     .el-form-item {
       border-bottom: 1px solid #d69528;
-    }
-    .content {
-      width: 191px;
-      height: 32px;
-      border: 1px solid #ffffff;
-      background: #eeeff3;
-      opacity: 0.95;
-      border-radius: 5px;
-      margin-right: 17px;
-      // padding: 0 8px;
-
-      font-size: 16px;
-      font-family: Microsoft YaHei;
-      font-weight: 400;
-      color: #6f7074;
-      line-height: 32px;
-
-      input {
-        height: 32px;
-        padding: 0 8px !important;
-        background: #ffffff;
-        opacity: 0.5;
+      margin: 0 6px 10px;
+      .el-form-item__label {
+        font-size: 14px;
+        font-weight: bold;
+      }
+      .content {
+        width: 210px !important;
+        // height: 32px;
+        border: 1px solid #ffffff;
+        opacity: 0.95;
         border-radius: 5px;
-        border: 0;
-        &::-webkit-input-placeholder {
-          font-size: 16px;
-          font-family: Microsoft YaHei;
-          font-weight: 300;
-          color: #585956 !important;
-          line-height: 32px;
+        margin-right: 17px;
+        // padding: 0 8px;
+
+        font-size: 16px;
+        font-family: Microsoft YaHei;
+        font-weight: 400;
+        color: #6f7074;
+        line-height: 32px;
+
+        input,
+        textarea {
+          height: 32px;
+          // padding: 0 8px !important;
+          background: #ffffff;
+          opacity: 0.5;
+          border-radius: 5px;
+          border: 0;
+          &::-webkit-input-placeholder {
+            font-size: 16px;
+            font-family: Microsoft YaHei;
+            font-weight: 300;
+            color: #6f7074 !important;
+            line-height: 32px;
+          }
         }
       }
     }
     .option {
+      text-align: center;
       button {
         width: 112px !important;
         height: 40px !important;
@@ -338,6 +355,111 @@ export default class QRcode extends Vue {
         // &:last-child {
         //   float: right;
         // }
+      }
+    }
+  }
+
+  .device {
+    width: 335px;
+    height: 205px;
+    border-radius: 5px;
+    .tagTitle {
+      padding-left: 40px;
+      background: url("~@/assets/image/base64/图层 22.png") no-repeat 8px 4px;
+    }
+    .content {
+      padding: 12px 9px;
+      > div {
+        display: flex;
+        justify-content: space-around;
+        margin: 25px 0;
+        line-height: 38px;
+        .label {
+          width: 80px;
+          font-size: 17px;
+          font-family: Microsoft YaHei;
+          font-weight: 400;
+          color: #000000;
+        }
+        .status {
+          width: 150px;
+          height: 38px;
+          background: #c0c2c8;
+          border-radius: 5px;
+          font-size: 17px;
+          font-family: Microsoft YaHei;
+          font-weight: 400;
+          color: #000000;
+          text-align: center;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        button {
+          width: 79px !important;
+          height: 38px !important;
+          background: linear-gradient(0deg, #dd722a, #f86633) !important;
+
+          font-size: 20px;
+          font-family: Microsoft YaHei;
+          font-weight: 400;
+          color: #ffffff;
+          line-height: 40px;
+          padding: 0;
+          // &:first-child {
+          //   float: left;
+          // }
+          // &:last-child {
+          //   float: right;
+          // }
+        }
+      }
+    }
+  }
+
+  .module {
+    width: 335px;
+    height: 220px;
+    border-radius: 5px;
+    margin-top: 30px;
+    .tagTitle {
+      padding-left: 40px;
+      background: url("~@/assets/image/base64/图层 23.png") no-repeat 8px 8px;
+    }
+    .content {
+      padding: 0 9px;
+      > div {
+        display: flex;
+        justify-content: space-between;
+        margin: 28px 0;
+        padding: 7px;
+        line-height: 38px;
+        background: #eeeff3;
+        border-radius: 5px;
+        .label {
+          font-size: 17px;
+          font-family: Microsoft YaHei;
+          font-weight: 400;
+          color: #000000;
+        }
+        button {
+          width: 79px !important;
+          height: 38px !important;
+          background: linear-gradient(0deg, #dd722a, #f86633) !important;
+
+          font-size: 20px;
+          font-family: Microsoft YaHei;
+          font-weight: 400;
+          color: #ffffff;
+          line-height: 40px;
+          padding: 0;
+          // &:first-child {
+          //   float: left;
+          // }
+          // &:last-child {
+          //   float: right;
+          // }
+        }
       }
     }
   }

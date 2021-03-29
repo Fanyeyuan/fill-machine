@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="block">
-      <div class="title">
+      <div class="title" :class="iclass">
         <span v-if="title">{{ title }}</span>
         <slot v-else name="title"></slot>
       </div>
@@ -16,6 +16,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 @Component
 export default class Blocks extends Vue {
   @Prop({ type: String }) title?: string;
+  @Prop({ type: String }) iclass?: string;
 }
 </script>
 

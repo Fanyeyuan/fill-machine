@@ -123,6 +123,15 @@ export default {
     login: '登   录',
     exit: '退出登录'
   },
+  setting: {
+    save: '保存',
+    qgdzycsj: '气缸动作延迟时间',
+    qgdzbjsj: '气缸动作报警事件',
+    gzsd: '灌  装  速  度  ',
+    fkwd: '封  口  温  度  ',
+    gzljz: '灌 装 量 校 准  ',
+    glink: 'G-Link 二维码'
+  },
   common: {
   }
 }

@@ -31,7 +31,7 @@
             </div>
           </div>
           <div class="right">
-            <img :src="src" class="qrcode" />
+            <img :src="src" class="qrcodes" />
           </div>
         </div>
       </div>
@@ -98,7 +98,7 @@ export default class Preview extends Vue {
       })
   }
 
-  @Emit('previewClose')
+  @Emit()
   previewClose () {
     return false
   }
@@ -202,7 +202,7 @@ export default class Preview extends Vue {
               font-size: 12px;
               line-height: 25px;
               font-weight: bold;
-              padding: 2px 6px;
+              padding: 2px 3px;
             }
             &:last-of-type {
               width: 102px;
@@ -214,7 +214,7 @@ export default class Preview extends Vue {
       }
       .right {
         float: right;
-        .qrcode {
+        .qrcodes {
           margin: 17px 0;
           width: 92px;
           height: 92px;
