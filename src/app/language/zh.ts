@@ -70,8 +70,7 @@ export default {
     bc: '泵出',
 
     ydxh: '移袋循环',
-    gzxh: '灌装循环',
-    sdtb: '手动贴标'
+    gzxh: '灌装循环'
   },
   qrcode: {
     newTag: {
@@ -131,6 +130,31 @@ export default {
     fkwd: '封  口  温  度  ',
     gzljz: '灌 装 量 校 准  ',
     glink: 'G-Link 二维码'
+  },
+  log: {
+    recode: '工作数据记录',
+    index: '序号',
+    jar_code: '灌装编号',
+    boar_code: '公猪编号',
+    boar_varieties: '品种品系',
+    volume: '单份体积',
+    plan_quantity: '计划灌装分量',
+    actual_quantity: '实际灌装分量',
+    time: '灌装时长',
+    prev: '上一页',
+    home: '首页',
+    export: '数据保存',
+    print: '报表打印',
+
+    printDialog: {
+      title: '打印机设置',
+      label: '打印机名称',
+      default: '默认',
+      empty: '暂无可用打印机',
+      confirm: '确认',
+      cancel: '取消',
+      noChoice: '您还没有选择打印机'
+    }
   },
   common: {
   }

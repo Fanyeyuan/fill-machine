@@ -1,40 +1,211 @@
 <template>
   <div class="log">
     <div class="content">
-      <div class="header">工作数据记录</div>
+      <div class="header" v-t="{ path: 'local.log.recode' }"></div>
       <div class="table">
-        <el-table :data="tableData" border stripe style="width: 100%">
-          <el-table-column prop="date" label="序号" :width="50">
+        <el-table :data="optionLog" border stripe style="width: 100%">
+          <el-table-column prop="id" :label="$t('local.log.index')" :width="50">
           </el-table-column>
-          <el-table-column prop="name" label="罐装编号"> </el-table-column>
-          <el-table-column prop="address" label="公猪编号"> </el-table-column>
-          <el-table-column prop="address" label="品种品系"> </el-table-column>
-          <el-table-column prop="address" label="单份体积"> </el-table-column>
-          <el-table-column prop="address" label="计划灌装分量" :width="110">
+          <el-table-column prop="jar_code" :label="$t('local.log.jar_code')">
           </el-table-column>
-          <el-table-column prop="address" label="实际灌装分量" :width="110">
+          <el-table-column prop="boar_code" :label="$t('local.log.boar_code')">
           </el-table-column>
-          <el-table-column prop="address" label="灌装时长"> </el-table-column>
+          <el-table-column
+            prop="boar_varieties"
+            :label="$t('local.log.boar_varieties')"
+          >
+          </el-table-column>
+          <el-table-column prop="volume" :label="$t('local.log.volume')">
+          </el-table-column>
+          <el-table-column
+            prop="plan_quantity"
+            :label="$t('local.log.plan_quantity')"
+            :width="110"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="actual_quantity"
+            :label="$t('local.log.time')"
+            :width="110"
+          >
+          </el-table-column>
+          <el-table-column :label="$t('local.log.index')">
+            <template slot-scope="scope">
+              <span style="margin-left: 10px">{{
+                scope.row.end_time - scope.row.create_time
+              }}</span>
+            </template></el-table-column
+          >
         </el-table>
       </div>
       <el-pagination
         class="pagination"
         background
-        layout="prev, pager, next"
+        layout="slot, prev, pager"
+        :current-page.sync="currentPage"
         :total="1000"
-        prev-text="上一页"
-        next-text="下一页"
+        :pager-count="5"
+        :prev-text="$t('local.log.prev')"
+        @current-change="changePage"
       >
+        <slot>
+          <el-button
+            class="btn-prev"
+            :disabled="currentPage === 1"
+            @click="currentPage = 1"
+            v-t="{ path: 'local.log.home' }"
+          ></el-button>
+        </slot>
       </el-pagination>
     </div>
+    <div class="recode">
+      <el-button
+        @click="RecodePrint"
+        v-t="{ path: 'local.log.print' }"
+      ></el-button>
+      <el-button
+        class="disable"
+        @click="ExportData"
+        v-t="{ path: 'local.log.export' }"
+      ></el-button>
+    </div>
+    <printDialog
+      :dialog-visible="dialogVisible"
+      @cancel="handlePrintDialogCancel"
+      @select-print="printSelectAfter"
+    />
+    <webview
+      v-show="false"
+      class="m23"
+      ref="printWebview"
+      :src="fullPath"
+      nodeintegration
+    />
   </div>
 </template>
 
 <script lang="ts">
+import path from 'path'
+import { remote } from 'electron'
 import { Component, Vue } from 'vue-property-decorator'
+import { WokerParam } from '@/app/database/model/woker'
+import PrintDialog from '@/components/common/PrintDialog.vue'
+import moment from 'moment'
+import CSV from '@/app/common/csv'
+const { dialog, getCurrentWindow } = remote
 
-@Component
-export default class Log extends Vue {}
+@Component({
+  components: {
+    PrintDialog
+  }
+})
+export default class Log extends Vue {
+  private fullPath = path.join(__static, "printRecord.html"); // eslint-disable-line
+  private optionLog: WokerParam[] = [];
+  private currentPage = 1;
+  private dialogVisible = false;
+  private printDeviceName = '';
+
+  mounted () {
+    this.optionLog = new Array(10).fill(0).map((value, index) => {
+      return {
+        id: index + 1,
+        username: '',
+        jar_code: 'a' + index,
+        boar_code: 'b' + index,
+        boar_varieties: 'c' + index,
+        volume: 100,
+        plan_quantity: 1000,
+        actual_quantity: 100,
+        create_time: 0,
+        end_time: 100,
+        status: 1,
+        message: '0'
+      }
+    })
+    // console.log(this.optionLog);
+  }
+
+  changePage () {
+    this.optionLog = new Array(10).fill(0).map((value, index) => {
+      return {
+        id: index + 1,
+        username: '',
+        jar_code: 'e' + this.currentPage,
+        boar_code: 'd' + this.currentPage,
+        boar_varieties: 'd' + this.currentPage,
+        volume: 100 + this.currentPage,
+        plan_quantity: 1000 + this.currentPage,
+        actual_quantity: 100 + this.currentPage,
+        create_time: 0,
+        end_time: 100,
+        status: 1,
+        message: '0'
+      }
+    })
+  }
+
+  private RecodePrint () {
+    this.dialogVisible = true
+  }
+
+  handlePrintDialogCancel () {
+    this.$emit('cancel')
+    this.dialogVisible = false
+  }
+
+  printSelectAfter (val: any) {
+    this.dialogVisible = false
+    // this.$electronStore.set('printForm', val.name)
+    this.printDeviceName = val.name
+    console.log(this.printDeviceName)
+
+    // this.printRender()
+  }
+
+  private readonly title = {
+    id: '序号',
+    username: '用户名',
+    jar_code: '灌装编号',
+    boar_code: '公猪编号',
+    boar_varieties: '品名品系',
+    volume: '灌装量',
+    plan_quantity: '疾患灌装量',
+    actual_quantity: '实际灌装量',
+    create_time: '开始时间',
+    end_time: '结束时间',
+    status: '状态',
+    message: '原因'
+  };
+
+  ExportData () {
+    const filename = moment().format('YYYYMMDD HHmmss')
+    const filters = [
+      {
+        name: 'csv',
+        extensions: ['csv'] // 文件后缀名类型， 如md
+      }
+    ]
+
+    dialog
+      .showSaveDialog(getCurrentWindow(), {
+        filters,
+        defaultPath: filename
+      })
+      .then((choice) => {
+        if (!choice.canceled) {
+          if (choice.filePath) {
+            const csv = new CSV(
+              choice.filePath,
+              JSON.stringify(this.title),
+              this.optionLog
+            )
+            csv.WriteDecoderLog(1)
+          }
+        }
+      })
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -52,11 +223,13 @@ export default class Log extends Vue {}
       height: 22px;
       font-size: 20px;
       font-family: Microsoft YaHei;
-      font-weight: 400;
+      font-weight: bold;
       color: #000000;
       margin-bottom: 3px;
     }
     .table {
+      height: 310px;
+      margin-bottom: 5px;
       background-color: inherit !important;
       // width: 100%;
       // .el-table {
@@ -67,6 +240,35 @@ export default class Log extends Vue {}
       text-align: center;
     }
   }
+
+  .recode {
+    overflow: hidden;
+    padding: 14px 2px;
+    > button {
+      width: 190px !important;
+      height: 55px !important;
+      background: #fedb75 !important;
+      box-shadow: 0px 0px 0px 0px rgba(76, 76, 79, 0.32);
+      border-radius: 14px !important;
+
+      font-size: 20px;
+      font-family: Microsoft YaHei;
+      font-weight: 400;
+      color: #000000;
+      padding-left: 27px;
+      // line-height: 11px;
+      &:first-child {
+        float: left;
+      }
+      &:last-child {
+        float: right;
+      }
+    }
+    .disable {
+      background: linear-gradient(255deg, #c2c2c2, #7d7c7c, #c2c2c2) !important;
+      box-shadow: 0px 0px 0px 0px rgba(76, 76, 79, 0.32) !important;
+    }
+  }
 }
 </style>
 
@@ -75,6 +277,7 @@ export default class Log extends Vue {}
   .content {
     .table {
       .el-table {
+        height: 100%;
         border: 1px solid black;
         background-color: inherit !important;
         tr,
@@ -82,6 +285,26 @@ export default class Log extends Vue {}
           background-color: inherit !important;
           border-color: black;
           color: black;
+        }
+        td {
+          padding: 1px 0 !important;
+          border-color: black;
+        }
+      }
+    }
+    .pagination {
+      text-align: center;
+      button {
+        padding: 0 11px;
+      }
+      button,
+      li {
+        // background: #ffffff !important;
+        // padding: 0 11px;
+        border: 2px solid #d69528 !important;
+        border-radius: 10px;
+        :not(.disabled).active {
+          color: #409eff;
         }
       }
     }

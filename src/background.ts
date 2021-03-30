@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, autoUpdater } from 'electron'
+import { app, protocol, BrowserWindow, autoUpdater, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 // import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -89,3 +89,9 @@ if (isDevelopment) {
     })
   }
 }
+
+ipcMain.on('getPrinterList', (event) => {
+  const { sender } = event
+  const list = sender.getPrinters()
+  sender.send('getPrinterList', list)
+})
