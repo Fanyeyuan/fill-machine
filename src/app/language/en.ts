@@ -47,31 +47,30 @@ export default {
     dabiao: 'marking'
   },
   ready: {
-    qgydjc: '气缸运动监测',
-    cdqgqj: '穿袋气缸前进',
-    cdqgj: '穿袋气缸进',
-    yjcqqg: '压紧裁切气缸',
-    gzqg: '灌装气缸',
-    ydqgt: '移袋气缸退',
-    tbxzgj: '贴标旋转缸进',
-    tbxzgt: '贴标旋转缸退',
-    tbqg: '贴标气缸',
-    dbqg: '顶标气缸',
-    czkf: '抽真空阀',
+    qgydjc: 'Cylinder monitoring',
+    cdqgqj: 'Punctured',
+    ydqgj: 'Moved bag in',
+    yjcqqg: 'Tightened/Cut',
+    gzqg: 'Filling',
+    ydqgt: 'Moved bag out',
+    tbxzgj: 'Marked in',
+    tbxzgt: 'Marked out',
+    tbqg: 'Marked',
+    dbqg: 'Topmark',
+    czkf: 'Vacuum valve',
 
-    fkwk: '封口温控',
-    sswd: '实时温度',
-    jr: '加热',
-    tz: '停止',
+    fkwk: 'Sealing temp',
+    sswd: 'real-time',
+    jr: 'Heat',
+    tz: 'Stop',
 
-    rdbkz: '蠕动泵控制',
-    gzl: '灌装量',
-    br: '泵入',
-    bc: '泵出',
+    rdbkz: 'Peristaltic pump',
+    gzl: 'volume',
+    br: 'In',
+    bc: 'Out',
 
-    ydxh: '移袋循环',
-    gzxh: '灌装循环',
-    sdtb: '手动贴标'
+    ydxh: 'Moving bags',
+    gzxh: 'Filling cycle'
   },
   qrcode: {
     newTag: {
@@ -121,6 +120,43 @@ export default {
     username: 'login username',
     password: 'login password',
     login: 'Login',
-    exit: 'Logout'
+    exit: 'Logout',
+    success: 'Wellcome',
+    fail: 'Incorrect username or password'
+  },
+  setting: {
+    save: 'Save',
+    qgdzycsj: 'Delay time',
+    qgdzbjsj: 'Alarm time',
+    gzsd: 'Filling speed',
+    fkwd: 'Temperature',
+    gzljz: 'Fill calibration',
+    glink: 'G-Link QRcode'
+  },
+  log: {
+    recode: 'Work Recording',
+    index: 'index',
+    jar_code: 'Filling num',
+    boar_code: 'Boar num',
+    boar_varieties: 'Strain/Breed',
+    volume: 'Volume',
+    plan_quantity: 'Planned num',
+    actual_quantity: 'Actual num',
+    time: 'used time',
+    prev: 'Prev',
+    next: 'Next',
+    home: 'First',
+    export: 'Export',
+    print: 'Print',
+
+    printDialog: {
+      title: 'Printer Setting',
+      label: 'Printer Name',
+      default: 'Default',
+      empty: 'No printer available',
+      confirm: 'confirm',
+      cancel: 'cancel',
+      noChoice: 'Please choice printer'
+    }
   }
 }

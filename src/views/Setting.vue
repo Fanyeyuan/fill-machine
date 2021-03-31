@@ -52,7 +52,10 @@
       </el-col>
     </el-row>
     <div class="save">
-      <el-button v-t="{ path: 'local.setting.save' }"></el-button>
+      <el-button
+        class="iconfont icon-baocun"
+        v-t="{ path: 'local.setting.save' }"
+      ></el-button>
     </div>
   </div>
 </template>
@@ -117,14 +120,16 @@ export default class Setting extends Vue {}
     button {
       display: block;
       margin-left: auto;
-      width: 79px !important;
-      height: 38px !important;
-      background: linear-gradient(0deg, #dd722a, #f86633) !important;
+      width: 190px !important;
+      height: 55px !important;
+      background: #fedb75 !important;
+      box-shadow: 0px 0px 0px 0px rgba(76, 76, 79, 0.32);
+      border-radius: 14px !important;
 
       font-size: 20px;
       font-family: Microsoft YaHei;
       font-weight: 400;
-      color: #ffffff;
+      color: #000;
       line-height: 40px;
       padding: 0;
       // &:first-child {
@@ -133,6 +138,16 @@ export default class Setting extends Vue {}
       // &:last-child {
       //   float: right;
       // }
+    }
+    .disable {
+      background: linear-gradient(255deg, #c2c2c2, #7d7c7c, #c2c2c2) !important;
+      box-shadow: 0px 0px 0px 0px rgba(76, 76, 79, 0.32) !important;
+    }
+    .iconfont {
+      &::before {
+        font-size: 20px;
+        margin-right: 20px;
+      }
     }
   }
 }

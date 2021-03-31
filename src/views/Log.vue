@@ -3,8 +3,14 @@
     <div class="content">
       <div class="header" v-t="{ path: 'local.log.recode' }"></div>
       <div class="table">
-        <el-table :data="optionLog" border stripe style="width: 100%">
-          <el-table-column prop="id" :label="$t('local.log.index')" :width="50">
+        <el-table
+          :data="optionLog"
+          :max-height="330"
+          border
+          stripe
+          style="width: 100%"
+        >
+          <el-table-column prop="id" :label="$t('local.log.index')" :width="60">
           </el-table-column>
           <el-table-column prop="jar_code" :label="$t('local.log.jar_code')">
           </el-table-column>
@@ -13,6 +19,7 @@
           <el-table-column
             prop="boar_varieties"
             :label="$t('local.log.boar_varieties')"
+            :width="90"
           >
           </el-table-column>
           <el-table-column prop="volume" :label="$t('local.log.volume')">
@@ -25,11 +32,11 @@
           </el-table-column>
           <el-table-column
             prop="actual_quantity"
-            :label="$t('local.log.time')"
+            :label="$t('local.log.actual_quantity')"
             :width="110"
           >
           </el-table-column>
-          <el-table-column :label="$t('local.log.index')">
+          <el-table-column :label="$t('local.log.time')">
             <template slot-scope="scope">
               <span style="margin-left: 10px">{{
                 scope.row.end_time - scope.row.create_time
@@ -41,11 +48,12 @@
       <el-pagination
         class="pagination"
         background
-        layout="slot, prev, pager"
+        layout="slot, prev, pager, next"
         :current-page.sync="currentPage"
         :total="1000"
         :pager-count="5"
         :prev-text="$t('local.log.prev')"
+        :next-text="$t('local.log.next')"
         @current-change="changePage"
       >
         <slot>
@@ -131,8 +139,8 @@ export default class Log extends Vue {
       return {
         id: index + 1,
         username: '',
-        jar_code: 'e' + this.currentPage,
-        boar_code: 'd' + this.currentPage,
+        jar_code: 'afdsrfewrdsfdsdasadse' + this.currentPage * 29032,
+        boar_code: 'adawqedasdadxzcsadfasdd' + this.currentPage,
         boar_varieties: 'd' + this.currentPage,
         volume: 100 + this.currentPage,
         plan_quantity: 1000 + this.currentPage,
@@ -255,7 +263,6 @@ export default class Log extends Vue {
       font-family: Microsoft YaHei;
       font-weight: 400;
       color: #000000;
-      padding-left: 27px;
       // line-height: 11px;
       &:first-child {
         float: left;
@@ -283,12 +290,19 @@ export default class Log extends Vue {
         tr,
         th {
           background-color: inherit !important;
-          border-color: black;
           color: black;
         }
         td {
           padding: 1px 0 !important;
+        }
+        tr,
+        th,
+        td {
           border-color: black;
+          text-align: center;
+          div {
+            padding: 0;
+          }
         }
       }
     }

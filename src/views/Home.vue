@@ -3,10 +3,7 @@
     <el-row class="containor" :gutter="25">
       <el-col :span="10">
         <block class="work" :title="$t('local.home.work')">
-          <div class="content">
-            料袋缺料
-            尽快更换！
-          </div>
+          <div class="content">料袋缺料 尽快更换！</div>
         </block>
       </el-col>
       <el-col :span="14">
@@ -22,9 +19,7 @@
           <el-col :span="12">
             <block class="ceil" :title="$t('local.home.gzys')">
               <div class="ml">
-                <div class="content gzys">
-                  00:00:00
-                </div>
+                <div class="content gzys">00:00:00</div>
               </div>
             </block>
           </el-col>
@@ -34,7 +29,7 @@
             <block class="ceil" :title="$t('local.home.jhgzfs')">
               <div class="ml">
                 <el-input class="content num"></el-input>
-                <span v-t="{path:'local.home.fenshu'}"></span>
+                <span v-t="{ path: 'local.home.fenshu' }"></span>
               </div>
             </block>
           </el-col>
@@ -43,9 +38,16 @@
               <div class="ml shiji">
                 <div class="content">
                   1560
-                  <span v-t="{path:'local.home.fenshu'}"></span>
+                  <span v-t="{ path: 'local.home.fenshu' }"></span>
                 </div>
-                <checkboxs class="checkboxs" :value="clear" @change="clearClick()" ckStyle="checked" unStyle="unchecked" :label="$t('local.home.clear')"></checkboxs>
+                <checkboxs
+                  class="checkboxs"
+                  :value="clear"
+                  @change="clearClick()"
+                  ckStyle="checked"
+                  unStyle="unchecked"
+                  :label="$t('local.home.clear')"
+                ></checkboxs>
               </div>
             </block>
           </el-col>
@@ -54,17 +56,27 @@
           <el-col :span="12">
             <block class="ceil" :title="$t('local.home.dabiao')">
               <div class="dabiao">
-                <checkboxs :value="checked" @change="dabiaoClick(true)" ckStyle="checked" unStyle="unchecked" :label="$t('local.home.confirm')"></checkboxs>
-                <checkboxs :value="!checked" @change="dabiaoClick(false)" ckStyle="checked" unStyle="unchecked" :label="$t('local.home.cancel')"></checkboxs>
+                <checkboxs
+                  :value="checked"
+                  @change="dabiaoClick(true)"
+                  ckStyle="checked"
+                  unStyle="unchecked"
+                  :label="$t('local.home.confirm')"
+                ></checkboxs>
+                <checkboxs
+                  :value="!checked"
+                  @change="dabiaoClick(false)"
+                  ckStyle="checked"
+                  unStyle="unchecked"
+                  :label="$t('local.home.cancel')"
+                ></checkboxs>
               </div>
             </block>
           </el-col>
           <el-col :span="12">
             <block class="ceil" :title="$t('local.home.fksjwd')">
               <div class="ml fksjwd">
-                <div class="content gzys">
-                  192℃
-                </div>
+                <div class="content gzys">192℃</div>
               </div>
             </block>
           </el-col>
@@ -72,8 +84,14 @@
       </el-col>
     </el-row>
     <div class="option">
-      <el-button icon="el-icon-edit">{{$t('local.home.start')}}</el-button>
-      <el-button icon="el-icon-edit">{{$t('local.home.stop')}}</el-button>
+      <el-button
+        class="iconfont icon-kaishi"
+        v-t="{ path: 'local.home.start' }"
+      ></el-button>
+      <el-button
+        class="iconfont icon-Target disable"
+        v-t="{ path: 'local.home.stop' }"
+      ></el-button>
     </div>
   </div>
 </template>
@@ -104,18 +122,18 @@ export default class Home extends Vue {
 </script>
 
 <style lang="scss">
-.home{
+.home {
   padding: 20px 57px 22px 53px;
   // .containor{
   //   margin-bottom: 28px;
   // }
-  .work{
+  .work {
     width: 283px;
     height: 367px;
-    .content{
+    .content {
       width: 270px;
       height: 319px;
-      border: 1px solid #FFFFFF;
+      border: 1px solid #ffffff;
       background: #eeeff3;
       opacity: 0.95;
       border-radius: 5px;
@@ -125,7 +143,7 @@ export default class Home extends Vue {
       font-size: 20px;
       font-family: Microsoft YaHei;
       font-weight: bold;
-      color: #DB2121;
+      color: #db2121;
       line-height: 64px;
     }
   }
@@ -136,12 +154,12 @@ export default class Home extends Vue {
     border-radius: 5px;
     margin: 0 20px 20px 0;
     .ml {
-      border-bottom: 2px solid #D5721B;
+      border-bottom: 2px solid #d5721b;
       margin: 20px 12px 23px 8px;
-      .content{
+      .content {
         width: 81px;
         height: 38px;
-        border: 1px solid #FFFFFF;
+        border: 1px solid #ffffff;
         background: #eeeff3;
         opacity: 0.95;
         border-radius: 5px;
@@ -154,10 +172,10 @@ export default class Home extends Vue {
         color: #000000;
         line-height: 38px;
 
-        input{
+        input {
           height: 38px;
           padding: 0 8px !important;
-          background: #FFFFFF;
+          background: #ffffff;
           opacity: 0.5;
           border-radius: 5px;
           border: 0;
@@ -171,10 +189,10 @@ export default class Home extends Vue {
         }
       }
 
-      .num{
+      .num {
         width: 101px;
       }
-      .gzys{
+      .gzys {
         width: 100%;
         background: #c0c2c8;
         border: 0;
@@ -187,11 +205,11 @@ export default class Home extends Vue {
         text-align: center;
       }
     }
-    .shiji{
+    .shiji {
       border: 0;
       margin-top: 0;
       margin-bottom: 0;
-      >div:first-child{
+      > div:first-child {
         width: 100% !important;
         background: #c0c2c8 !important;
         // opacity: 0.13;
@@ -200,44 +218,46 @@ export default class Home extends Vue {
         text-align: center;
         margin-bottom: 5px;
       }
-      .checkboxs{
+      .checkboxs {
         width: 81px;
         margin: 0;
         margin-left: 80px;
       }
     }
-    .fksjwd{
-      border:0;
+    .fksjwd {
+      border: 0;
     }
-    .dabiao{
-      border:0;
-      >div{
+    .dabiao {
+      border: 0;
+      > div {
         width: 81px;
         display: inline-block;
         margin: 15px 5px;
       }
     }
-    .checked{
+    .checked {
       width: 18px;
       height: 18px;
 
-      background: url('~@/assets/image/base64/checked.png') no-repeat center;
+      background: url("~@/assets/image/base64/checked.png") no-repeat center;
       // background-size: cover;
     }
-    .unchecked{
+    .unchecked {
       width: 18px;
       height: 18px;
-      background: url('~@/assets/image/base64/unchecked.png') no-repeat center;
+      background: url("~@/assets/image/base64/unchecked.png") no-repeat center;
       // background-size: cover;
     }
   }
 
-  .option{
+  .option {
     overflow: hidden;
-    >button{
+    > button {
       width: 190px !important;
       height: 55px !important;
-      background: #FEDB75 !important;
+      background-color: #fedb75;
+      background-repeat: no-repeat;
+      // background: #fedb75 no-repeat !important;
       box-shadow: 0px 0px 0px 0px rgba(76, 76, 79, 0.32);
       border-radius: 14px !important;
 
@@ -245,13 +265,24 @@ export default class Home extends Vue {
       font-family: Microsoft YaHei;
       font-weight: 400;
       color: #000000;
-      padding-left: 27px;
-      // line-height: 11px;
-      &:first-child{
+      line-height: 30px;
+      &:first-child {
+        // background-image: url("~@/assets/image/base64/图层 16.png");
         float: left;
       }
-      &:last-child{
+      &:last-child {
+        // background-image: url("~@/assets/image/base64/图层 15.png");
         float: right;
+      }
+    }
+    .disable {
+      background: linear-gradient(255deg, #c2c2c2, #7d7c7c, #c2c2c2) no-repeat !important;
+      box-shadow: 0px 0px 0px 0px rgba(76, 76, 79, 0.32) !important;
+    }
+    .iconfont {
+      &::before {
+        font-size: 30px;
+        margin-right: 20px;
       }
     }
   }

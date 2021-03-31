@@ -53,6 +53,7 @@ app.on('window-all-closed', () => {
   }
 })
 app.allowRendererProcessReuse = false
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required')
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the

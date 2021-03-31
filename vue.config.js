@@ -6,6 +6,7 @@ module.exports = {
       nodeModulesPath: ['../../node_modules', './node_modules'],
       builderOptions: {
         nsis: {},
+        // asar: false, //测试 打包后video 显示
         extraResources: [
           {
             from: './static',

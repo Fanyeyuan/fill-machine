@@ -15,63 +15,63 @@
           <div class="action">
             <div>
               <switcher
-                :label="$t('local.ready.cdqgqj')"
+                :label="$t('local.ready.ydqgj')"
                 @change="test"
                 :status="status"
               ></switcher>
             </div>
             <div>
               <switcher
-                :label="$t('local.ready.cdqgqj')"
+                :label="$t('local.ready.yjcqqg')"
                 @change="test"
                 :status="status"
               ></switcher>
             </div>
             <div>
               <switcher
-                :label="$t('local.ready.cdqgqj')"
+                :label="$t('local.ready.gzqg')"
                 @change="test"
                 :status="status"
               ></switcher>
             </div>
             <div>
               <switcher
-                :label="$t('local.ready.cdqgqj')"
+                :label="$t('local.ready.ydqgt')"
                 @change="test"
                 :status="status"
               ></switcher>
             </div>
             <div>
               <switcher
-                :label="$t('local.ready.cdqgqj')"
+                :label="$t('local.ready.tbxzgj')"
                 @change="test"
                 :status="status"
               ></switcher>
             </div>
             <div>
               <switcher
-                :label="$t('local.ready.cdqgqj')"
+                :label="$t('local.ready.tbxzgt')"
                 @change="test"
                 :status="status"
               ></switcher>
             </div>
             <div>
               <switcher
-                :label="$t('local.ready.cdqgqj')"
+                :label="$t('local.ready.tbqg')"
                 @change="test"
                 :status="status"
               ></switcher>
             </div>
             <div>
               <switcher
-                :label="$t('local.ready.cdqgqj')"
+                :label="$t('local.ready.dbqg')"
                 @change="test"
                 :status="status"
               ></switcher>
             </div>
             <div>
               <switcher
-                :label="$t('local.ready.cdqgqj')"
+                :label="$t('local.ready.czkf')"
                 @change="test"
                 :status="status"
               ></switcher>
@@ -228,7 +228,6 @@ export default class Ready extends Vue {
           font-size: 20px;
           font-family: Microsoft YaHei;
           font-weight: 400;
-          padding-left: 27px;
           // line-height: 11px;
           &:first-child {
             float: left;
@@ -265,7 +264,6 @@ export default class Ready extends Vue {
       font-family: Microsoft YaHei;
       font-weight: 400;
       color: #000000;
-      padding-left: 27px;
       // line-height: 11px;
       &:first-child {
         float: left;

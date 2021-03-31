@@ -49,7 +49,7 @@ export default {
   ready: {
     qgydjc: '气缸运动监测',
     cdqgqj: '穿袋气缸前进',
-    cdqgj: '穿袋气缸进',
+    ydqgj: '移袋气缸进',
     yjcqqg: '压紧裁切气缸',
     gzqg: '灌装气缸',
     ydqgt: '移袋气缸退',
@@ -120,12 +120,14 @@ export default {
     username: '登录账户',
     password: '登录密码',
     login: '登   录',
-    exit: '退出登录'
+    exit: '退出登录',
+    success: '登陆成功',
+    fail: '密码或账号错误，请重新输入'
   },
   setting: {
     save: '保存',
     qgdzycsj: '气缸动作延迟时间',
-    qgdzbjsj: '气缸动作报警事件',
+    qgdzbjsj: '气缸动作报警时间',
     gzsd: '灌  装  速  度  ',
     fkwd: '封  口  温  度  ',
     gzljz: '灌 装 量 校 准  ',
@@ -142,8 +144,9 @@ export default {
     actual_quantity: '实际灌装分量',
     time: '灌装时长',
     prev: '上一页',
+    next: '下一页',
     home: '首页',
-    export: '数据保存',
+    export: '数据导出',
     print: '报表打印',
 
     printDialog: {

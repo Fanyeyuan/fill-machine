@@ -13,6 +13,7 @@ import en from '@/app/language/en'
 
 // 自定义 icon
 import './assets/icon/self/style.css'
+import './assets/icon/ali/iconfont.css'
 
 Vue.use(VueI18n)
 
@@ -27,7 +28,7 @@ const messages = {
   }
 }
 const i18n = new VueI18n({
-  locale: 'zh', // set locale
+  locale: 'en', // set locale
   messages // set locale messages
 })
 Vue.use(Element, {
