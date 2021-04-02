@@ -96,3 +96,6 @@ ipcMain.on('getPrinterList', (event) => {
   const list = sender.getPrinters()
   sender.send('getPrinterList', list)
 })
+ipcMain.on('self-quit-app', (event) => {
+  app.quit()
+})

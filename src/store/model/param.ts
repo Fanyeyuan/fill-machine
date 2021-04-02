@@ -1,7 +1,7 @@
 // import Param from '@/app/database/model/param'
 import { Commit } from 'vuex'
 const state = {
-  id!: 0,
+  id: 0,
   delay: 0, // 气缸动作延迟时间
   alarm: 0, // 气缸动作报警事件
   speed: 0, // 罐装速度
@@ -11,11 +11,19 @@ const state = {
 
 const mutations = {
   saveParam (states: typeof state, params: typeof state) {
-    states = params
+    for (const key in params) {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
+        states[key] = params[key]
+      }
+    }
   }
 }
 
-const getters = {}
+const getters = {
+  getState (states: typeof state) {
+    return state
+  }
+}
 
 const actions = {
   saveParam (context: { commit: Commit }, params: typeof state) {

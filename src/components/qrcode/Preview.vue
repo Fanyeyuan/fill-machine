@@ -23,7 +23,7 @@
             </div>
             <div class="message">
               <span>{{ $t("local.qrcode.preview.effective") }}:</span>
-              <span>{{ param.specification | formateTime }}</span>
+              <span>{{ param.effective | formateTime }}</span>
             </div>
             <div class="message">
               <span>{{ $t("local.qrcode.preview.specification") }}:</span>
@@ -50,7 +50,7 @@
 <script lang="ts">
 import path from 'path'
 import { WebviewTag } from 'electron'
-import { Component, Emit, Prop, Ref, Vue } from 'vue-property-decorator'
+import { Component, Emit, Prop, Ref, Vue, Watch } from 'vue-property-decorator'
 import QRCode from 'qrcode'
 import moment from 'moment'
 
@@ -72,20 +72,26 @@ export default class Preview extends Vue {
     type: Object,
     required: true,
     validator: (obj: QRCodeParam) => {
-      if (!obj.company) return false
-      if (!obj.boar_code) return false
-      if (!obj.boar_varieties) return false
-      if (!obj.volume) return false
-      if (!obj.create_time) return false
-      if (!obj.specification) return false
-      if (!obj.qrcode) return false
+      if (typeof obj.company !== 'string') return false
+      if (typeof obj.boar_code !== 'string') return false
+      if (typeof obj.boar_varieties !== 'string') return false
+      if (typeof obj.volume !== 'number') return false
+      if (typeof obj.create_time !== 'number') return false
+      if (typeof obj.effective !== 'number') return false
+      if (typeof obj.qrcode !== 'string') return false
       return true
     }
   })
   readonly param!: QRCodeParam;
   private fullPath = path.join(__static, "print.html"); // eslint-disable-line
 
-  mounted () {
+  @Emit()
+  previewClose () {
+    return false
+  }
+
+  @Watch('param', { deep: true, immediate: true })
+  updatePreview () {
     QRCode.toDataURL(this.param.qrcode)
       .then((url: string) => {
         this.src = url
@@ -98,12 +104,7 @@ export default class Preview extends Vue {
       })
   }
 
-  @Emit()
-  previewClose () {
-    return false
-  }
-
-  print () {
+  print (dev_name: string) {
     this.webview.addEventListener('ipc-message', (event) => {
       if (event.channel === 'webview-print-do') {
         this.webview.print({
@@ -113,15 +114,15 @@ export default class Preview extends Vue {
             vertical: 203
           },
           printBackground: true,
-          deviceName: 'ZDesigner GX420d'
+          deviceName: dev_name
         })
       }
     })
-    console.log(this.preview.innerHTML)
+    console.log(this.priviewHtml)
 
     this.webview.send('webview-print-render', {
-      printName: 'ZDesigner GX420d',
-      html: this.preview.innerHTML
+      printName: dev_name,
+      html: this.priviewHtml
     })
   }
 }

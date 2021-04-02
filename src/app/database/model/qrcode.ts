@@ -7,9 +7,9 @@ export interface QRCodeParam{
   boar_varieties: string; // 公猪品种
   volume: number; // 精液容量
   create_time?: number; // 生成事件
-  specification: number; // 有效 时间
+  effective: number; // 有效 时间
   qrcode: string; // 二维码内容
-  choiced: boolean; // 是否被选中
+  choiced?: boolean; // 是否被选中
 }
 
 export default class QRcode implements QRCodeParam {
@@ -19,7 +19,7 @@ export default class QRcode implements QRCodeParam {
   boar_varieties: string; // 公猪品种
   volume: number; // 精液容量
   create_time?: number; // 生成事件
-  specification: number; // 有效 时间
+  effective: number; // 有效 时间
   qrcode: string; // 二维码内容
   choiced: boolean; // 是否被选中
 
@@ -29,7 +29,7 @@ export default class QRcode implements QRCodeParam {
     this.boar_code = param.boar_code
     this.boar_varieties = param.boar_varieties
     this.volume = param.volume
-    this.specification = param.specification
+    this.effective = param.effective
     this.qrcode = param.qrcode
     param.create_time ? (this.create_time = param.create_time) : (this.create_time = new Date().getTime())
     param.choiced ? (this.choiced = param.choiced) : (this.choiced = false)
@@ -60,6 +60,22 @@ export default class QRcode implements QRCodeParam {
     // .catch(err => {
     //   param.error('param.save',err.message)
     // })
+  }
+
+  static async updateQr (param: QRCodeParam) {
+    const values = await QRcode.all()
+    const pro = values.map(val => {
+      console.log(val.id, param.id)
+
+      if (val.id !== param.id) {
+        val.choiced = false
+        return db.update(db.tables.qrcode, { choiced: false }, { id: val.id })
+      } else {
+        param.choiced = true
+        return db.update(db.tables.qrcode, { ...param }, { id: param.id })
+      }
+    })
+    return Promise.all(pro)
   }
 
   update (param: QRCodeParam) {

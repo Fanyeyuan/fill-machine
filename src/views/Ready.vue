@@ -7,73 +7,73 @@
           <div class="qgqj">
             <switcher
               :label="$t('local.ready.cdqgqj')"
-              :status="status"
+              :status="status.cdqgqj"
               directive="left"
-              @change="test"
+              @change="sendcmd('cdqgqj')"
             ></switcher>
           </div>
           <div class="action">
             <div>
               <switcher
                 :label="$t('local.ready.ydqgj')"
-                @change="test"
-                :status="status"
+                @change="sendcmd('ydqgj')"
+                :status="status.ydqgj"
               ></switcher>
             </div>
             <div>
               <switcher
                 :label="$t('local.ready.yjcqqg')"
-                @change="test"
-                :status="status"
+                @change="sendcmd('yjcqqg')"
+                :status="status.yjcqqg"
               ></switcher>
             </div>
             <div>
               <switcher
                 :label="$t('local.ready.gzqg')"
-                @change="test"
-                :status="status"
+                @change="sendcmd('gzqg')"
+                :status="status.gzqg"
               ></switcher>
             </div>
             <div>
               <switcher
                 :label="$t('local.ready.ydqgt')"
-                @change="test"
-                :status="status"
+                @change="sendcmd('ydqgt')"
+                :status="status.ydqgt"
               ></switcher>
             </div>
             <div>
               <switcher
                 :label="$t('local.ready.tbxzgj')"
-                @change="test"
-                :status="status"
+                @change="sendcmd('tbxzgj')"
+                :status="status.tbxzgj"
               ></switcher>
             </div>
             <div>
               <switcher
                 :label="$t('local.ready.tbxzgt')"
-                @change="test"
-                :status="status"
+                @change="sendcmd('tbxzgt')"
+                :status="status.tbxzgt"
               ></switcher>
             </div>
             <div>
               <switcher
                 :label="$t('local.ready.tbqg')"
-                @change="test"
-                :status="status"
+                @change="sendcmd('tbqg')"
+                :status="status.tbqg"
               ></switcher>
             </div>
             <div>
               <switcher
                 :label="$t('local.ready.dbqg')"
-                @change="test"
-                :status="status"
+                @change="sendcmd('dbqg')"
+                :status="status.dbqg"
               ></switcher>
             </div>
             <div>
               <switcher
                 :label="$t('local.ready.czkf')"
-                @change="test"
-                :status="status"
+                @change="sendcmd('czkf')"
+                :status="status.czkf"
               ></switcher>
             </div>
           </div>
@@ -85,12 +85,18 @@
           <div class="content">
             <div class="param">
               <div class="temp" v-t="{ path: 'local.ready.sswd' }"></div>
-              <div class="number">196.0℃</div>
+              <div class="number">{{ sensor.fksjwd }}℃</div>
             </div>
             <div class="bord"></div>
             <div class="anniu">
-              <el-button v-t="{ path: 'local.ready.jr' }"></el-button>
-              <el-button v-t="{ path: 'local.ready.tz' }"></el-button>
+              <el-button
+                @click="sendcmd('jr')"
+                v-t="{ path: 'local.ready.jr' }"
+              ></el-button>
+              <el-button
+                @click="sendcmd('tz')"
+                v-t="{ path: 'local.ready.tz' }"
+              ></el-button>
             </div>
           </div>
         </block>
@@ -99,20 +105,32 @@
           <div class="content">
             <div class="param">
               <div class="temp" v-t="{ path: 'local.ready.gzl' }"></div>
-              <div class="number">60mL</div>
+              <div class="number">{{ volume }}mL</div>
             </div>
             <div class="bord"></div>
             <div class="anniu">
-              <el-button v-t="{ path: 'local.ready.bc' }"></el-button>
-              <el-button v-t="{ path: 'local.ready.br' }"></el-button>
+              <el-button
+                @click="sendcmd('bc')"
+                v-t="{ path: 'local.ready.bc' }"
+              ></el-button>
+              <el-button
+                @click="sendcmd('br')"
+                v-t="{ path: 'local.ready.br' }"
+              ></el-button>
             </div>
           </div>
         </block>
       </el-col>
     </el-row>
     <div class="button">
-      <el-button v-t="{ path: 'local.ready.ydxh' }"></el-button>
-      <el-button v-t="{ path: 'local.ready.gzxh' }"></el-button>
+      <el-button
+        @click="sendcmd('ydxh')"
+        v-t="{ path: 'local.ready.ydxh' }"
+      ></el-button>
+      <el-button
+        @click="sendcmd('gzxh')"
+        v-t="{ path: 'local.ready.gzxh' }"
+      ></el-button>
     </div>
   </div>
 </template>
@@ -122,6 +140,12 @@ import { Component, Vue } from 'vue-property-decorator'
 import Block from '@/components/common/Blocks.vue'
 import Switcher from '@/components/ready/Switcher.vue'
 
+import * as modbus from '@/app/modbus'
+import { namespace } from 'vuex-class'
+import real from '@/store/model/real'
+const realModule = namespace('real')
+const workModule = namespace('work')
+
 @Component({
   components: {
     Block,
@@ -129,10 +153,17 @@ import Switcher from '@/components/ready/Switcher.vue'
   }
 })
 export default class Ready extends Vue {
-  status = false;
-  test (status: boolean) {
-    this.status = status
-    console.log(this.status)
+  @realModule.State status!: typeof real.state.status;
+  @realModule.State sensor!: typeof real.state.sensor;
+  @workModule.State volume!: number;
+
+  private sendcmd (cmd: string) {
+    modbus
+      .writeState(modbus.CommandRegister[cmd])
+      .then(() => {
+        this.$message.success('success')
+      })
+      .catch((e) => this.$message.error(e.message))
   }
 }
 </script>

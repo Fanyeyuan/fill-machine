@@ -22,7 +22,7 @@
         v-t="{ path: 'local.login.login' }"
       ></el-button>
     </div>
-    <div class="exit">
+    <div class="exit" @click="quit">
       <i class="el-icon-switch-button"></i
       ><span v-t="{ path: 'local.login.exit' }"></span>
     </div>
@@ -30,6 +30,7 @@
 </template>
 
 <script lang="ts">
+import { remote, ipcRenderer } from 'electron'
 import User from '@/app/database/model/user'
 import { Component, Vue } from 'vue-property-decorator'
 
@@ -55,10 +56,20 @@ export default class Login extends Vue {
       })
       .catch(console.log)
   }
+
+  private quit () {
+    this.$confirm(this.$tc('local.login.quitInfo'), {
+      type: 'warning'
+    })
+      .then(() => {
+        ipcRenderer.send('self-quit-app')
+      })
+      .catch()
+  }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .in {
   height: 100%;
   background: url("~@/assets/image/login.jpg") no-repeat center;
@@ -81,21 +92,6 @@ export default class Login extends Vue {
       padding: 35px 14px;
       .username {
         margin-bottom: 31px;
-      }
-
-      input {
-        padding: 0;
-        border: 0 !important;
-        border-radius: 0;
-        border-bottom: 1px solid #585956 !important;
-        background-color: transparent !important;
-        &::-webkit-input-placeholder {
-          font-size: 16px;
-          font-family: Microsoft YaHei;
-          font-weight: 300;
-          color: #585956 !important;
-          line-height: 40px;
-        }
       }
     }
     .button {
@@ -134,6 +130,29 @@ export default class Login extends Vue {
       font-weight: 400;
       color: #f6f6f6;
       line-height: 20px;
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+.in {
+  .login {
+    .input {
+      input {
+        padding: 0;
+        border: 0 !important;
+        border-radius: 0;
+        border-bottom: 1px solid #585956 !important;
+        background-color: transparent !important;
+        &::-webkit-input-placeholder {
+          font-size: 16px;
+          font-family: Microsoft YaHei;
+          font-weight: 300;
+          color: #585956 !important;
+          line-height: 40px;
+        }
+      }
     }
   }
 }

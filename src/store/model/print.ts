@@ -13,10 +13,12 @@ const state = {
 
 const mutations = {
   saveQRCode (states: typeof state, params: typeof state.QRCode) {
-    states.QRCode = params
+    states.QRCode.isValid = params.isValid
+    states.QRCode.name = params.name
   },
   saveRecord (states: typeof state, params: typeof state.QRCode) {
-    states.QRCode = params
+    states.Record.isValid = params.isValid
+    states.Record.name = params.name
   }
 }
 
@@ -25,7 +27,7 @@ const getters = {
     return states.QRCode
   },
   getRecord (states: typeof state) {
-    return states.QRCode
+    return states.Record
   }
 }
 

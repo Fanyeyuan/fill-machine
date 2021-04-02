@@ -28,7 +28,7 @@
                 <el-input
                   class="content"
                   type="textarea"
-                  :autosize="{ maxRows: 2 }"
+                  :autosize="{ minRows: 2, maxRows: 2 }"
                   clearable
                   resize="none"
                   v-model="ruleForm.boar_code"
@@ -53,6 +53,7 @@
                   class="content"
                   :placeholder="$tc('local.qrcode.newTag.note.created')"
                   v-model="ruleForm.create_time"
+                  value-format="timestamp"
                   style="width: 100%"
                 ></el-date-picker>
               </el-form-item>
@@ -63,6 +64,7 @@
                 <el-date-picker
                   type="datetime"
                   class="content"
+                  value-format="timestamp"
                   :placeholder="$tc('local.qrcode.newTag.note.effective')"
                   v-model="ruleForm.effective"
                   style="width: 100%"
@@ -94,7 +96,7 @@
                 v-t="{ path: 'local.qrcode.newTag.preview' }"
               ></el-button>
               <el-button
-                @click="resetForm('ruleForm')"
+                @click="save('ruleForm')"
                 v-t="{ path: 'local.qrcode.newTag.save' }"
               ></el-button>
             </div>
@@ -110,7 +112,7 @@
                 class="label"
                 v-t="{ path: 'local.qrcode.device.temp' }"
               ></div>
-              <div class="status">192℃</div>
+              <div class="status">{{ getSensor.fksjwd }}℃</div>
               <el-button
                 v-t="{ path: 'local.qrcode.device.right' }"
               ></el-button>
@@ -120,8 +122,16 @@
                 class="label"
                 v-t="{ path: 'local.qrcode.device.print' }"
               ></div>
-              <div class="status"></div>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :content="getQRCode.name"
+                placement="top-start"
+              >
+                <div class="status">{{ getQRCode.name }}</div>
+              </el-tooltip>
               <el-button
+                @click="searchPrinter"
                 v-t="{ path: 'local.qrcode.device.search' }"
               ></el-button>
             </div>
@@ -131,17 +141,19 @@
         <block class="module" iclass="tagTitle">
           <div slot="title" v-t="{ path: 'local.qrcode.module.title' }"></div>
           <div class="content">
-            <div>
-              <div class="label" v-t="{ path: 'local.qrcode.module.temp' }">
-                1
-              </div>
-              <el-button v-t="{ path: 'local.qrcode.module.edit' }"></el-button>
+            <div :class="{ active: getChoiceTemplates === 1 }">
+              <div class="label">{{ $t("local.qrcode.module.temp") }}1</div>
+              <el-button
+                @click="changeTemplate(1)"
+                v-t="{ path: 'local.qrcode.module.edit' }"
+              ></el-button>
             </div>
-            <div>
-              <div class="label" v-t="{ path: 'local.qrcode.module.temp' }">
-                2
-              </div>
-              <el-button v-t="{ path: 'local.qrcode.module.edit' }"></el-button>
+            <div :class="{ active: getChoiceTemplates === 2 }">
+              <div class="label">{{ $t("local.qrcode.module.temp") }}2</div>
+              <el-button
+                @click="changeTemplate(2)"
+                v-t="{ path: 'local.qrcode.module.edit' }"
+              ></el-button>
             </div>
           </div>
         </block>
@@ -155,16 +167,15 @@
       :show-close="false"
       center
     >
-      <preview :param="param" @preview-close="ePreviewClose"></preview>
+      <preview :param="ruleForm" @preview-close="ePreviewClose"></preview>
     </el-dialog>
 
-    <preview
-      v-show="false"
-      :param="param"
-      ref="preview"
-      @preview-close="ePreviewClose"
-    ></preview>
-    <!-- <el-button @click="test">打印</el-button> -->
+    <preview v-show="false" :param="ruleForm" ref="preview"></preview>
+    <printDialog
+      :dialog-visible="printerDialogVisible"
+      @cancel="handlePrintDialogCancel"
+      @select-print="printSelectAfter"
+    />
   </div>
 </template>
 
@@ -173,16 +184,56 @@ import { Component, Ref, Vue } from 'vue-property-decorator'
 
 import Block from '@/components/common/Blocks.vue'
 import Preview from '@/components/qrcode/Preview.vue'
+import PrintDialog from '@/components/common/PrintDialog.vue'
 import { Form } from 'node_modules/element-ui/types'
+
+import { namespace } from 'vuex-class'
+import qrcode, { QRCodeParam } from '@/app/database/model/qrcode'
+import print from '@/app/database/model/print'
+import prints from '@/store/model/print'
+import real from '@/store/model/real'
+const qrcodeModule = namespace('qrcode')
+const printModule = namespace('print')
+const realModule = namespace('real')
+const workModule = namespace('work')
 
 @Component({
   components: {
     Preview,
-    Block
+    Block,
+    PrintDialog
   }
 })
 export default class QRcode extends Vue {
-  private ruleForm = {
+  @workModule.State volume!: number;
+  @qrcodeModule.Action saveQRcode!: (params: QRCodeParam) => void;
+  @qrcodeModule.Getter getModel!: QRCodeParam;
+  @qrcodeModule.State model!: QRCodeParam[];
+  @printModule.Getter getQRCode!: typeof prints.state.QRCode;
+  @printModule.Action('saveQRCode') saveQRPrint!: (
+    code: typeof prints.state.QRCode
+  ) => void;
+
+  @realModule.Getter getSensor!: typeof real.state.sensor;
+
+  // 打印机选择区域
+  private printerDialogVisible = false;
+  searchPrinter () {
+    this.printerDialogVisible = true
+  }
+
+  handlePrintDialogCancel () {
+    this.printerDialogVisible = false
+  }
+
+  printSelectAfter (val: { name: string }) {
+    this.printerDialogVisible = false
+    this.saveQRPrint({ name: val.name, isValid: true })
+    print.update({ type: 'QRCode', dev_name: val.name }, { type: 'QRCode' })
+  }
+
+  // 新建表格打印区域
+  private ruleForm: QRCodeParam = {
     company: '沙雕1号', // 公司名称
     boar_code: 'AAAAA,BBBBB,CCCCC,DDDDD,EEEEE', // 公猪编号
     boar_varieties: '长白山1号', // 公猪品种
@@ -247,22 +298,37 @@ export default class QRcode extends Vue {
 
   @Ref('preview') readonly preview!: Preview;
   private centerDialogVisible = false;
-  private param = {
-    company: '沙雕1号', // 公司名称
-    boar_code: 'AAAAA,BBBBB,CCCCC,DDDDD,EEEEE', // 公猪编号
-    boar_varieties: '长白山1号', // 公猪品种
-    volume: 60, // 精液容量
-    create_time: 1616724248331, // 生成时间
-    specification: 1619402648000, // 有效 时间
-    qrcode: '沙雕123 一群大傻吊'
-  };
 
   test () {
-    this.preview.print()
+    this.preview.print(this.getQRCode.name)
+  }
+
+  save (formName: string) {
+    (this.$refs[formName] as Form).validate(async (valid: boolean) => {
+      if (valid) {
+        this.saveQRcode(this.ruleForm)
+        console.log(this.ruleForm, this.getModel)
+        qrcode
+          .updateQr(this.ruleForm)
+          .then((val) => {
+            this.$message.success('success')
+          })
+          .catch((e) => {
+            this.$message.error(e.message)
+          })
+      } else {
+        console.log('error submit!!')
+        return false
+      }
+    })
+  }
+
+  ePreviewClose () {
+    this.centerDialogVisible = false
   }
 
   submitForm (formName: string) {
-    (this.$refs[formName] as Form).validate((valid: boolean) => {
+    (this.$refs[formName] as Form).validate(async (valid: boolean) => {
       if (valid) {
         this.centerDialogVisible = true
       } else {
@@ -272,12 +338,20 @@ export default class QRcode extends Vue {
     })
   }
 
-  resetForm (formName: string) {
-    (this.$refs[formName] as Form).resetFields()
+  // 标签模板区域
+  get getChoiceTemplates () {
+    return this.getModel.id
   }
 
-  ePreviewClose () {
-    this.centerDialogVisible = false
+  changeTemplate (num: number) {
+    this.ruleForm = { ...this.model[num - 1] }
+    this.ruleForm.volume = this.volume
+    console.log(this.model)
+  }
+
+  mounted () {
+    this.ruleForm = { ...this.getModel }
+    this.ruleForm.volume = this.volume
   }
 }
 </script>
@@ -428,6 +502,9 @@ export default class QRcode extends Vue {
     }
     .content {
       padding: 0 9px;
+      .active {
+        background: burlywood;
+      }
       > div {
         display: flex;
         justify-content: space-between;

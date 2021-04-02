@@ -6,42 +6,42 @@
           <div>
             <div class="label" v-t="{ path: 'local.setting.qgdzycsj' }"></div>
             <div class="in">
-              <el-input class="input"></el-input>
+              <el-input class="input" v-model="param.delay"></el-input>
               <div class="unit">S</div>
             </div>
           </div>
           <div>
             <div class="label" v-t="{ path: 'local.setting.qgdzbjsj' }"></div>
             <div class="in">
-              <el-input class="input"></el-input>
+              <el-input class="input" v-model="param.alarm"></el-input>
               <div class="unit">S</div>
             </div>
           </div>
           <div>
             <div class="label" v-t="{ path: 'local.setting.gzsd' }"></div>
             <div class="in">
-              <el-input class="input"></el-input>
+              <el-input class="input" v-model="param.speed"></el-input>
               <div class="unit">R/S</div>
             </div>
           </div>
           <div>
             <div class="label" v-t="{ path: 'local.setting.fkwd' }"></div>
             <div class="in">
-              <el-input class="input"></el-input>
+              <el-input class="input" v-model="param.temperature"></el-input>
               <div class="unit">℃</div>
             </div>
           </div>
           <div>
             <div class="label" v-t="{ path: 'local.setting.gzljz' }"></div>
             <div class="in">
-              <el-input class="input"></el-input>
+              <el-input class="input" v-model="param.jar"></el-input>
               <div class="unit"></div>
             </div>
           </div>
           <div>
             <div class="label" v-t="{ path: 'local.setting.glink' }"></div>
             <div class="in">
-              <el-input class="input"></el-input>
+              <el-input class="input" v-model="param.id"></el-input>
               <div class="unit"></div>
             </div>
           </div>
@@ -54,6 +54,7 @@
     <div class="save">
       <el-button
         class="iconfont icon-baocun"
+        @click="SaveParams"
         v-t="{ path: 'local.setting.save' }"
       ></el-button>
     </div>
@@ -62,9 +63,79 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { writeParam } from '@/app/modbus'
+
+import Param from '@/app/database/model/param'
+import { namespace } from 'vuex-class'
+const paramModule = namespace('param')
 
 @Component
-export default class Setting extends Vue {}
+export default class Setting extends Vue {
+  @paramModule.Action saveParam!: (params: any) => void;
+  @paramModule.State id!: number;
+  @paramModule.State delay!: number;
+  @paramModule.State alarm!: number;
+  @paramModule.State speed!: number;
+  @paramModule.State temperature!: number;
+  @paramModule.State jar!: number;
+
+  private param = {
+    delay: this.delay,
+    alarm: this.alarm,
+    speed: this.speed,
+    temperature: this.temperature,
+    jar: this.jar
+  };
+
+  mounted () {
+    this.param = {
+      delay: this.delay,
+      alarm: this.alarm,
+      speed: this.speed,
+      temperature: this.temperature,
+      jar: this.jar
+    }
+  }
+
+  private async SaveParams () {
+    try {
+      console.log(this.param, this.id, this.alarm)
+
+      this.saveParam(this.param)
+      await writeParam([
+        this.temperature,
+        0,
+        this.delay,
+        this.alarm,
+        this.speed,
+        this.jar
+      ])
+      Param.all().then((param) => {
+        if (param.length) {
+          new Param(param[0])
+            .update(this.param)
+            .then((value) => {
+              this.$message.success('更新成功')
+            })
+            .catch((err) => {
+              this.$message.error('更新失败,请稍后重试' + err.message)
+            })
+        } else {
+          new Param(this.param)
+            .save()
+            .then((value) => {
+              this.$message.success('保存成功')
+            })
+            .catch((err) => {
+              this.$message.error('保存失败,请稍后重试' + err.message)
+            })
+        }
+      })
+    } catch (e) {
+      this.$message.error(e.message)
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

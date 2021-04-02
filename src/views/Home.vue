@@ -11,7 +11,11 @@
           <el-col :span="12">
             <block class="ceil" :title="$t('local.home.dfgzl')">
               <div class="ml">
-                <el-input class="content"></el-input>
+                <el-input-number
+                  class="content"
+                  :controls="false"
+                  v-model.lazy="ivolume"
+                ></el-input-number>
                 mL
               </div>
             </block>
@@ -19,7 +23,7 @@
           <el-col :span="12">
             <block class="ceil" :title="$t('local.home.gzys')">
               <div class="ml">
-                <div class="content gzys">00:00:00</div>
+                <div class="content gzys">{{ fillingTime }}</div>
               </div>
             </block>
           </el-col>
@@ -28,7 +32,11 @@
           <el-col :span="12">
             <block class="ceil" :title="$t('local.home.jhgzfs')">
               <div class="ml">
-                <el-input class="content num"></el-input>
+                <el-input-number
+                  class="content num"
+                  :controls="false"
+                  v-model.lazy="planedNum"
+                ></el-input-number>
                 <span v-t="{ path: 'local.home.fenshu' }"></span>
               </div>
             </block>
@@ -37,7 +45,7 @@
             <block class="ceil" :title="$t('local.home.sjgzfs')">
               <div class="ml shiji">
                 <div class="content">
-                  1560
+                  {{ actual_quantity }}
                   <span v-t="{ path: 'local.home.fenshu' }"></span>
                 </div>
                 <checkboxs
@@ -57,14 +65,14 @@
             <block class="ceil" :title="$t('local.home.dabiao')">
               <div class="dabiao">
                 <checkboxs
-                  :value="checked"
+                  :value="isMark"
                   @change="dabiaoClick(true)"
                   ckStyle="checked"
                   unStyle="unchecked"
                   :label="$t('local.home.confirm')"
                 ></checkboxs>
                 <checkboxs
-                  :value="!checked"
+                  :value="!isMark"
                   @change="dabiaoClick(false)"
                   ckStyle="checked"
                   unStyle="unchecked"
@@ -76,7 +84,7 @@
           <el-col :span="12">
             <block class="ceil" :title="$t('local.home.fksjwd')">
               <div class="ml fksjwd">
-                <div class="content gzys">192℃</div>
+                <div class="content gzys">{{ sensor.fksjwd }}℃</div>
               </div>
             </block>
           </el-col>
@@ -99,8 +107,14 @@
 <script lang="ts">
 import Block from '@/components/common/Blocks.vue'
 import Checkboxs from '@/components/common/Checkbox.vue'
-
+import moment from 'moment'
 import { Component, Prop, ModelSync, Vue } from 'vue-property-decorator'
+
+import * as modbus from '@/app/modbus'
+import { namespace } from 'vuex-class'
+import real from '@/store/model/real'
+const realModule = namespace('real')
+const workModule = namespace('work')
 
 @Component({
   components: {
@@ -109,10 +123,40 @@ import { Component, Prop, ModelSync, Vue } from 'vue-property-decorator'
   }
 })
 export default class Home extends Vue {
-  checked = true;
+  @workModule.State volume!: number;
+  @workModule.Action saveVolume!: (vol: number) => void;
+  @workModule.State actual_quantity!: number;
+  @workModule.State plan_quantity!: number;
+  @workModule.Action savePlaned!: (num: number) => void;
+  @workModule.State isMark!: boolean;
+  @workModule.Action saveMarked!: (state: boolean) => void;
+  @workModule.State create_time!: number;
+  @realModule.State sensor!: typeof real.state.sensor;
+
   clear = false;
   dabiaoClick (state: boolean) {
-    this.checked = state
+    this.saveMarked(state)
+  }
+
+  get ivolume () {
+    return this.volume
+  }
+
+  set ivolume (volume) {
+    this.saveVolume(volume)
+  }
+
+  get planedNum () {
+    return this.plan_quantity
+  }
+
+  set planedNum (num) {
+    this.savePlaned(num)
+  }
+
+  get fillingTime () {
+    const diff = moment().diff(this.create_time)
+    return moment(diff).format('HH:mm:ss')
   }
 
   clearClick () {

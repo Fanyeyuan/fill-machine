@@ -122,7 +122,8 @@ export default {
     login: '登   录',
     exit: '退出登录',
     success: '登陆成功',
-    fail: '密码或账号错误，请重新输入'
+    fail: '密码或账号错误，请重新输入',
+    quitInfo: '此操作将退出app,是否继续'
   },
   setting: {
     save: '保存',

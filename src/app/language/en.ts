@@ -122,7 +122,8 @@ export default {
     login: 'Login',
     exit: 'Logout',
     success: 'Wellcome',
-    fail: 'Incorrect username or password'
+    fail: 'Incorrect username or password',
+    quitInfo: 'The app will quit, continue?'
   },
   setting: {
     save: 'Save',

@@ -8,7 +8,7 @@ const state = {
     dabiao: false, // 打标
 
     cdqgqj: false, // 穿袋气缸前进
-    cdqgj: false, // 穿袋气缸进
+    ydqgj: false, // 移袋气缸进
     yjcqqg: false, // 压紧裁切气缸
     gzqg: false, // 罐装气缸
     ydqgt: false, // 移袋气缸退
@@ -23,20 +23,34 @@ const state = {
   }
 }
 
-const mutations: any = {
-  saveHasNewVersion (states: any, params: boolean) {
-    states.version.hasNewVersion = params
+const mutations = {
+  saveSensor (states: typeof state, params: typeof state.sensor) {
+    states.sensor.fksjwd = params.fksjwd
+    states.sensor.sjgzfs = params.sjgzfs
+  },
+  saveStatus (states: typeof state, params: typeof state.status) {
+    for (const key in params) {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
+        states.status[key] = params[key]
+      }
+    }
   }
 }
 
-const getters: any = {
-  getHasNewVersion (states: any) {
-    return states.version.hasNewVersion
+const getters = {
+  getSensor (states: typeof state) {
+    return states.sensor
+  },
+  getStatus (states: typeof state) {
+    return states.status
   }
 }
 
-const actions: any = {
-  saveHasNewVersion (context: { commit: Commit }, params: boolean) {
+const actions = {
+  saveSensor (context: { commit: Commit }, params: typeof state.sensor) {
+    context.commit('saveHasNewVersion', params)
+  },
+  saveStatus (context: { commit: Commit }, params: typeof state.status) {
     context.commit('saveHasNewVersion', params)
   }
 }
