@@ -203,6 +203,7 @@ div.header {
       // font-size: 20px;
       // font-weight: 400;
       background: url("~@/assets/image/base64/GB1000Pro.png") no-repeat center;
+      background-size: contain;
     }
   }
 

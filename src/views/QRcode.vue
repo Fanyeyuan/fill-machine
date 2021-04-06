@@ -195,7 +195,7 @@ import real from '@/store/model/real'
 const qrcodeModule = namespace('qrcode')
 const printModule = namespace('print')
 const realModule = namespace('real')
-const workModule = namespace('work')
+// const workModule = namespace('work')
 
 @Component({
   components: {
@@ -205,7 +205,7 @@ const workModule = namespace('work')
   }
 })
 export default class QRcode extends Vue {
-  @workModule.State volume!: number;
+  // @workModule.State volume!: number;
   @qrcodeModule.Action saveQRcode!: (params: QRCodeParam) => void;
   @qrcodeModule.Getter getModel!: QRCodeParam;
   @qrcodeModule.State model!: QRCodeParam[];
@@ -240,7 +240,9 @@ export default class QRcode extends Vue {
     create_time: 1616724248331, // 生成时间
     effective: 1619402648000, // 有效 时间
     qrcode: '沙雕123 一群大傻吊',
-    volume: 60 // 精液容量
+    volume: 60, // 精液容量
+    plan_quantity: 0,
+    is_mark: false
   };
 
   private rules = {
@@ -345,13 +347,13 @@ export default class QRcode extends Vue {
 
   changeTemplate (num: number) {
     this.ruleForm = { ...this.model[num - 1] }
-    this.ruleForm.volume = this.volume
+    // this.ruleForm.volume = this.volume
     console.log(this.model)
   }
 
   mounted () {
     this.ruleForm = { ...this.getModel }
-    this.ruleForm.volume = this.volume
+    // this.ruleForm.volume = this.volume
   }
 }
 </script>

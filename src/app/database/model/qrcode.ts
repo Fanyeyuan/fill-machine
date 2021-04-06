@@ -10,6 +10,8 @@ export interface QRCodeParam{
   effective: number; // 有效 时间
   qrcode: string; // 二维码内容
   choiced?: boolean; // 是否被选中
+  plan_quantity: number;// 计划数量
+  is_mark?: boolean;// 是否打标
 }
 
 export default class QRcode implements QRCodeParam {
@@ -22,6 +24,8 @@ export default class QRcode implements QRCodeParam {
   effective: number; // 有效 时间
   qrcode: string; // 二维码内容
   choiced: boolean; // 是否被选中
+  plan_quantity: number;// 计划数量
+  is_mark?: boolean;// 是否打标
 
   constructor (param: QRCodeParam) {
     param.id && (this.id = param.id)
@@ -31,8 +35,10 @@ export default class QRcode implements QRCodeParam {
     this.volume = param.volume
     this.effective = param.effective
     this.qrcode = param.qrcode
+    this.plan_quantity = param.plan_quantity
     param.create_time ? (this.create_time = param.create_time) : (this.create_time = new Date().getTime())
     param.choiced ? (this.choiced = param.choiced) : (this.choiced = false)
+    param.is_mark ? (this.is_mark = param.is_mark) : (this.is_mark = false)
   }
 
   static get (condition: { [key: string]: any }) {

@@ -1,4 +1,6 @@
 import ModbusRTU from 'modbus-serial'
+import Com from '@/app/database/model/com'
+
 const client = new ModbusRTU()
 
 let readDataCallBack: (err: null|Error, data: any) => void
@@ -7,7 +9,7 @@ const baseAddr = 1000
 function readDatas () {
   setInterval(() => {
     client.readHoldingRegisters(baseAddr, 29).then((data) => {
-      readDataCallBack(null, data)
+      readDataCallBack(null, data.data)
     }).catch(err => {
       readDataCallBack(err, null)
     }
@@ -15,25 +17,27 @@ function readDatas () {
   }, 1000)
 }
 
-client.connectRTUBuffered('COM4', { baudRate: 115200 }, readDatas)
-client.setID(1)
-client.setTimeout(1000)
+Com.all().then(com => {
+  client.connectRTUBuffered(com[0].path, { baudRate: com[0].baud }, readDatas)
+  client.setID(1)
+  client.setTimeout(1000)
+})
 
 export enum CommandRegister{
   start = 1, // 启动
   reset = 2, // 复位
   cdqgqj = 11, // 穿袋气缸前进
-  ydkzj = 12, // 移待控制进
-  ydkzt = 13, // 移袋控制退
-  gzkz = 14, // 灌装控制
-  yjcqkz = 15, // 压紧裁切控制
-  dbkz = 16, // 顶标控制
-  tbkz = 17, // 贴标控制
+  ydqgj = 12, // 移袋控制进
+  ydqgt = 13, // 移袋控制退
+  gzqg = 14, // 灌装控制
+  yjcqqg = 15, // 压紧裁切控制
+  dbqg = 16, // 顶标控制
+  tbqg = 17, // 贴标控制
   czkf = 18, // 抽真空阀
-  tbxzj, // 贴标旋转进
-  tbxzt, // 贴标旋转退
+  tbxzgj, // 贴标旋转进
+  tbxzgt, // 贴标旋转退
   jr, // 加热
-  tzjr, // 停止加热
+  tz, // 停止加热
   br = 31, // 泵入
   bc, // 泵出
   ydxh = 41, // 移袋循环
@@ -98,12 +102,15 @@ export function writeParam (param: number[]) {
   return client.writeRegisters(baseAddr + Register.szfkwd, param)
 }
 export function writeVolume (volume: number) {
-  return client.writeRegister(baseAddr + Register.dfgzl, volume)
+  return client.writeRegisters(baseAddr + Register.dfgzl, [volume])
 }
 export function writePlanedBags (num: number) {
-  return client.writeRegister(baseAddr + Register.sjgzfs, num)
+  return client.writeRegisters(baseAddr + Register.sjgzfs, [num])
+}
+export function writeMarked (state: boolean) {
+  return client.writeRegisters(baseAddr + Register.sfdb, [state ? 1 : 0])
 }
 
 export function writeState (cmd: CommandRegister) {
-  return client.writeRegister(1027, cmd)
+  return client.writeRegisters(baseAddr + Register.kzaj, [cmd])
 }

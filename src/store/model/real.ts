@@ -2,7 +2,9 @@ import { Commit } from 'vuex'
 const state = {
   sensor: {
     fksjwd: 0, // 封口实际温度
-    sjgzfs: 0// 实际罐装份数
+    sjgzfs: 0, // 实际罐装份数
+    xtyxzt: 0, // 系统运行状态
+    yxzbz: 0 // 运行子步骤  0 手动模式，其他自动模式
   },
   status: {
     dabiao: false, // 打标
@@ -48,10 +50,10 @@ const getters = {
 
 const actions = {
   saveSensor (context: { commit: Commit }, params: typeof state.sensor) {
-    context.commit('saveHasNewVersion', params)
+    context.commit('saveSensor', params)
   },
   saveStatus (context: { commit: Commit }, params: typeof state.status) {
-    context.commit('saveHasNewVersion', params)
+    context.commit('saveStatus', params)
   }
 }
 

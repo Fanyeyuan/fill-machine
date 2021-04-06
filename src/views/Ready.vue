@@ -6,6 +6,7 @@
           <div slot="title" v-t="{ path: 'local.ready.qgydjc' }"></div>
           <div class="qgqj">
             <switcher
+              :disabled="isRuning"
               :label="$t('local.ready.cdqgqj')"
               :status="status.cdqgqj"
               directive="left"
@@ -15,6 +16,7 @@
           <div class="action">
             <div>
               <switcher
+                :disabled="isRuning"
                 :label="$t('local.ready.ydqgj')"
                 @change="sendcmd('ydqgj')"
                 :status="status.ydqgj"
@@ -22,6 +24,7 @@
             </div>
             <div>
               <switcher
+                :disabled="isRuning"
                 :label="$t('local.ready.yjcqqg')"
                 @change="sendcmd('yjcqqg')"
                 :status="status.yjcqqg"
@@ -29,6 +32,7 @@
             </div>
             <div>
               <switcher
+                :disabled="isRuning"
                 :label="$t('local.ready.gzqg')"
                 @change="sendcmd('gzqg')"
                 :status="status.gzqg"
@@ -36,6 +40,7 @@
             </div>
             <div>
               <switcher
+                :disabled="isRuning"
                 :label="$t('local.ready.ydqgt')"
                 @change="sendcmd('ydqgt')"
                 :status="status.ydqgt"
@@ -43,6 +48,7 @@
             </div>
             <div>
               <switcher
+                :disabled="isRuning"
                 :label="$t('local.ready.tbxzgj')"
                 @change="sendcmd('tbxzgj')"
                 :status="status.tbxzgj"
@@ -50,6 +56,7 @@
             </div>
             <div>
               <switcher
+                :disabled="isRuning"
                 :label="$t('local.ready.tbxzgt')"
                 @change="sendcmd('tbxzgt')"
                 :status="status.tbxzgt"
@@ -57,6 +64,7 @@
             </div>
             <div>
               <switcher
+                :disabled="isRuning"
                 :label="$t('local.ready.tbqg')"
                 @change="sendcmd('tbqg')"
                 :status="status.tbqg"
@@ -64,6 +72,7 @@
             </div>
             <div>
               <switcher
+                :disabled="isRuning"
                 :label="$t('local.ready.dbqg')"
                 @change="sendcmd('dbqg')"
                 :status="status.dbqg"
@@ -71,6 +80,7 @@
             </div>
             <div>
               <switcher
+                :disabled="isRuning"
                 :label="$t('local.ready.czkf')"
                 @change="sendcmd('czkf')"
                 :status="status.czkf"
@@ -90,10 +100,12 @@
             <div class="bord"></div>
             <div class="anniu">
               <el-button
+                :disabled="isRuning"
                 @click="sendcmd('jr')"
                 v-t="{ path: 'local.ready.jr' }"
               ></el-button>
               <el-button
+                :disabled="isRuning"
                 @click="sendcmd('tz')"
                 v-t="{ path: 'local.ready.tz' }"
               ></el-button>
@@ -110,10 +122,12 @@
             <div class="bord"></div>
             <div class="anniu">
               <el-button
+                :disabled="isRuning"
                 @click="sendcmd('bc')"
                 v-t="{ path: 'local.ready.bc' }"
               ></el-button>
               <el-button
+                :disabled="isRuning"
                 @click="sendcmd('br')"
                 v-t="{ path: 'local.ready.br' }"
               ></el-button>
@@ -124,10 +138,12 @@
     </el-row>
     <div class="button">
       <el-button
+        :disabled="isRuning"
         @click="sendcmd('ydxh')"
         v-t="{ path: 'local.ready.ydxh' }"
       ></el-button>
       <el-button
+        :disabled="isRuning"
         @click="sendcmd('gzxh')"
         v-t="{ path: 'local.ready.gzxh' }"
       ></el-button>
@@ -158,12 +174,18 @@ export default class Ready extends Vue {
   @workModule.State volume!: number;
 
   private sendcmd (cmd: string) {
+    console.log(modbus.CommandRegister[cmd], cmd)
+
     modbus
       .writeState(modbus.CommandRegister[cmd])
       .then(() => {
         this.$message.success('success')
       })
       .catch((e) => this.$message.error(e.message))
+  }
+
+  get isRuning () {
+    return !!this.sensor.yxzbz
   }
 }
 </script>

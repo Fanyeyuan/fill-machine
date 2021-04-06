@@ -12,7 +12,12 @@
         margin: 0;
       }
       body{
+        width: 100%;
+        height: 100vh;
         background-color: black;
+      }
+      #app{
+        display: none;
       }
     </style>
   </head>
@@ -20,7 +25,27 @@
     <noscript>
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
+    <video id="video" width="800" height="600" autoplay>
+      您的浏览器不支持Video标签。
+    </video>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+
+  <script>
+    const { ipcRenderer } = require('electron')
+    const fs = require('fs')
+    ipcRenderer.send('get-video-url')
+    ipcRenderer.once('get-video-url', (event, url) => {
+      fs.readFile(url, (error, buf)=>{ // 读取文件，并将缓存区进行转换
+        if(!error){
+          const buff = Uint8Array.from(buf);
+          const bolb = new Blob([buff]); // 转为一个新的Blob文件流
+          const video = document.getElementById('video')
+          video.src = window.URL.createObjectURL(bolb); // 转换为url地址并直接给到audio
+          // video.play()
+        }
+      });
+    })
+  </script>
   </body>
 </html>

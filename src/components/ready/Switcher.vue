@@ -2,7 +2,7 @@
   <div>
     <div
       class="switch"
-      :class="{ left: getdirective, up: !getdirective }"
+      :class="{ left: getdirective, up: !getdirective, disabled: disabled }"
       @click="change"
     >
       <div class="label">{{ label }}</div>
@@ -18,15 +18,15 @@ import { Component, Emit, Prop, Vue } from 'vue-property-decorator'
 export default class Switcher extends Vue {
   @Prop({ type: Boolean, required: true }) status!: boolean;
   @Prop({ type: String, required: true }) label!: string;
+  @Prop({ type: Boolean, default: false }) disabled!: boolean;
   @Prop({ type: String, default: 'up' }) directive!: string;
 
   private get getdirective () {
     return this.directive === 'left'
   }
 
-  @Emit('change')
   change () {
-    return !this.status
+    this.disabled || this.$emit('change', !this.status)
   }
 }
 </script>
@@ -52,6 +52,9 @@ export default class Switcher extends Vue {
   .off {
     background: url("~@/assets/image/base64/OFF.png") no-repeat center;
   }
+}
+.disabled {
+  cursor: not-allowed;
 }
 .up {
   .label {

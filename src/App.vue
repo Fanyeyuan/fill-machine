@@ -1,10 +1,6 @@
 <template>
   <div id="app">
-    <video v-if="!isStart" id="video" width="800" height="600" autoplay>
-      <source :src="videoSrc" type="video/mp4" />
-      您的浏览器不支持Video标签。
-    </video>
-    <div id="content" v-if="isStart">
+    <div id="content">
       <div class="header" v-if="!isLoginPage">
         <heads></heads>
         <navs></navs>
@@ -12,61 +8,101 @@
       <router-view />
       <foot class="foot"></foot>
     </div>
+    <preview v-show="false" :param="getModel" ref="preview"></preview>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Ref, Vue, Watch } from 'vue-property-decorator'
 import fs from 'fs'
 import path from 'path'
 import foot from '@/components/main/Foot.vue'
 import heads from '@/components/main/Head.vue'
 import navs from '@/components/main/Nav.vue'
+import Preview from '@/components/qrcode/Preview.vue'
 import * as modbus from '@/app/modbus'
 
 import { namespace } from 'vuex-class'
 
 import Param from '@/app/database/model/param'
-import QRcode from '@/app/database/model/qrcode'
+import QRcode, { QRCodeParam } from '@/app/database/model/qrcode'
 import Print from '@/app/database/model/print'
 const paramModule = namespace('param')
 const qrcodeModule = namespace('qrcode')
 const printModule = namespace('print')
+const realModule = namespace('real')
 
 @Component({
   components: {
+    Preview,
     foot,
     heads,
     navs
   }
 })
 export default class App extends Vue {
+  @realModule.Action saveSensor!: (params: any) => void;
+  @realModule.Action saveStatus!: (params: any) => void;
   @paramModule.Action saveParam!: (params: any) => void;
+  @qrcodeModule.Getter getModel!: QRCodeParam;
   @qrcodeModule.Action saveQRcode!: (params: any) => void;
+  @printModule.Getter getQRCode!: { isValid: true; name: string };
   @printModule.Action('saveQRCode') saveQRPrint!: (params: any) => void;
   @printModule.Action('saveRecord') saveRecordPrint!: (params: any) => void;
+
+  @Ref('preview') readonly preview!: Preview;
 
   private isLoginPage = false;
   private videoSrc = '';
   private readonly localSrc = path.join(__static, "./video/logo.mp4"); // eslint-disable-line
-  private isStart = process.env.NODE_ENV !== 'production';
+  private isStart = process.env.NODE_ENV === 'production';
   created () {
-    console.log(this.isLoginPage, this.isStart)
-
     let timehander: any = setTimeout(() => {
       this.isStart = true
+      const video = document.getElementById('video')
+      const app = document.getElementById('app')
+      video && video.remove()
+      app && (app.style.display = 'block')
       clearTimeout(timehander)
       timehander = null
-    }, 4500)
+    }, 4000)
   }
 
   mounted () {
-    const buf = fs.readFileSync(this.localSrc) // 读取文件，并将缓存区进行转换
-    const uint8Buffer = Uint8Array.from(buf)
-    const bolb = new Blob([uint8Buffer]) // 转为一个新的Blob文件流
-    this.videoSrc = window.URL.createObjectURL(bolb) // 转换为url地址并直接给到audio
     modbus.readData((err, data) => {
-      console.log(err, data)
+      if (err) console.log(err.message)
+      else {
+        const sensor = {
+          fksjwd: data[5], // 封口实际温度
+          sjgzfs: data[7], // 实际罐装份数
+          xtyxzt: data[28], // 系统运行状态
+          yxzbz: data[26] // 运行子步骤  0 手动模式，其他自动模式
+        }
+        const status = {
+          dabiao: !!data[23], // 打标
+
+          cdqgqj: !!data[15], // 穿袋气缸前进
+          ydqgj: !!data[13], // 移袋气缸进
+          yjcqqg: !!data[17], // 压紧裁切气缸
+          gzqg: !!data[16], // 罐装气缸
+          ydqgt: !!data[14], // 移袋气缸退
+          tbxzgj: !!data[21], // 贴标旋转缸进
+          tbxzgt: !!data[22], // 贴标旋转缸退
+          tbqg: !!data[19], // 贴标气缸
+          dbqg: !!data[18], // 顶标气缸
+          czkf: !!data[20], // 抽真空阀
+
+          fkwk: !!data[5], // 封口温控
+          rdbkz: !!data[5] // 蠕动泵控制
+        }
+
+        if (sensor.yxzbz && status.dabiao) {
+          this.preview.print(this.getQRCode.name)
+        }
+
+        this.saveSensor(sensor)
+        this.saveStatus(status)
+      }
     })
     this.updateParam()
     this.updateQRcode()
@@ -121,8 +157,7 @@ export default class App extends Vue {
 </script>
 <style lang="scss" scoped>
 #app {
-  width: 100%;
-  height: 100vh;
+  height: 100%;
   background: white;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   // -webkit-font-smoothing: antialiased;

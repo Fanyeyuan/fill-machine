@@ -2,6 +2,7 @@
 
 import { app, protocol, BrowserWindow, autoUpdater, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
+import path from 'path'
 // import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -98,4 +99,10 @@ ipcMain.on('getPrinterList', (event) => {
 })
 ipcMain.on('self-quit-app', (event) => {
   app.quit()
+})
+ipcMain.on('get-video-url', (event) => {
+  const localSrc = path.join(__static, "./video/logo.mp4"); // eslint-disable-line
+
+  const { sender } = event
+  sender.send('get-video-url', localSrc)
 })

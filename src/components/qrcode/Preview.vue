@@ -118,7 +118,7 @@ export default class Preview extends Vue {
         })
       }
     })
-    console.log(this.priviewHtml)
+    // console.log(this.priviewHtml)
 
     this.webview.send('webview-print-render', {
       printName: dev_name,

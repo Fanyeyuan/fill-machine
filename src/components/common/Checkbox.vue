@@ -1,6 +1,10 @@
 <template>
   <div>
-    <div class="checkbox" @click="checkboxClick">
+    <div
+      class="checkbox"
+      @click="checkboxClick"
+      :class="{ disabled: disabled }"
+    >
       <div class="icon" :class="[checked ? ckStyle : unStyle]">
         <!-- <i :class="[checked ? checkedIcon : uncheckIcon]"></i> -->
         <!-- <i class="icon-checked"></i> -->
@@ -26,11 +30,12 @@ export default class Checkbox extends Vue {
   @Prop({ default: 'icon-unchecked', type: String }) uncheckIcon!: string;
   @Prop({ type: String }) ckStyle!: string;
   @Prop({ type: String }) unStyle!: string;
+  @Prop({ type: Boolean, default: false }) disabled!: boolean;
   @ModelSync('value', 'change', { required: true, type: Boolean })
   checked!: boolean;
 
   checkboxClick () {
-    this.checked = !this.checked
+    !this.disabled && (this.checked = !this.checked)
   }
 }
 </script>
@@ -66,5 +71,8 @@ export default class Checkbox extends Vue {
     font-size: 12px;
     padding: 0;
   }
+}
+.disabled {
+  cursor: not-allowed;
 }
 </style>

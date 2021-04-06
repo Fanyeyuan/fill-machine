@@ -14,7 +14,9 @@
                 <el-input-number
                   class="content"
                   :controls="false"
+                  :disabled="isRuning"
                   v-model.lazy="ivolume"
+                  @blur="writeVolume"
                 ></el-input-number>
                 mL
               </div>
@@ -35,7 +37,9 @@
                 <el-input-number
                   class="content num"
                   :controls="false"
+                  :disabled="isRuning"
                   v-model.lazy="planedNum"
+                  @blur="writePlanedNum"
                 ></el-input-number>
                 <span v-t="{ path: 'local.home.fenshu' }"></span>
               </div>
@@ -51,6 +55,7 @@
                 <checkboxs
                   class="checkboxs"
                   :value="clear"
+                  :disabled="isRuning"
                   @change="clearClick()"
                   ckStyle="checked"
                   unStyle="unchecked"
@@ -66,6 +71,7 @@
               <div class="dabiao">
                 <checkboxs
                   :value="isMark"
+                  :disabled="isRuning"
                   @change="dabiaoClick(true)"
                   ckStyle="checked"
                   unStyle="unchecked"
@@ -73,6 +79,7 @@
                 ></checkboxs>
                 <checkboxs
                   :value="!isMark"
+                  :disabled="isRuning"
                   @change="dabiaoClick(false)"
                   ckStyle="checked"
                   unStyle="unchecked"
@@ -93,10 +100,12 @@
     </el-row>
     <div class="option">
       <el-button
+        @click="start"
         class="iconfont icon-kaishi"
         v-t="{ path: 'local.home.start' }"
       ></el-button>
       <el-button
+        @click="reset"
         class="iconfont icon-Target disable"
         v-t="{ path: 'local.home.stop' }"
       ></el-button>
@@ -114,6 +123,7 @@ import * as modbus from '@/app/modbus'
 import { namespace } from 'vuex-class'
 import real from '@/store/model/real'
 const realModule = namespace('real')
+const qrcodeModule = namespace('qrcode')
 const workModule = namespace('work')
 
 @Component({
@@ -123,23 +133,57 @@ const workModule = namespace('work')
   }
 })
 export default class Home extends Vue {
-  @workModule.State volume!: number;
-  @workModule.Action saveVolume!: (vol: number) => void;
-  @workModule.State actual_quantity!: number;
-  @workModule.State plan_quantity!: number;
-  @workModule.Action savePlaned!: (num: number) => void;
-  @workModule.State isMark!: boolean;
-  @workModule.Action saveMarked!: (state: boolean) => void;
+  @qrcodeModule.Getter getVolume!: number;
+  @qrcodeModule.Action saveVolume!: (vol: number) => void;
+  @qrcodeModule.Getter getPlaned!: number;
+  @qrcodeModule.Action savePlaned!: (num: number) => void;
+  @qrcodeModule.Getter getMarked!: boolean;
+  @qrcodeModule.Action saveMarked!: (state: boolean) => void;
+
   @workModule.State create_time!: number;
+  @workModule.State actual_quantity!: number;
+
   @realModule.State sensor!: typeof real.state.sensor;
 
   clear = false;
   dabiaoClick (state: boolean) {
-    this.saveMarked(state)
+    modbus
+      .writeMarked(state)
+      .then(() => {
+        this.saveMarked(state)
+        this.$message.success('success')
+      })
+      .catch((e) => this.$message.error(e.message))
+  }
+
+  writeVolume () {
+    modbus
+      .writeVolume(this.getVolume)
+      .then(() => {
+        this.$message.success('success')
+      })
+      .catch((e) => this.$message.error(e.message))
+  }
+
+  writePlanedNum () {
+    modbus
+      .writePlanedBags(this.getPlaned)
+      .then(() => {
+        this.$message.success('success')
+      })
+      .catch((e) => this.$message.error(e.message))
+  }
+
+  get isMark () {
+    return this.getMarked || false
+  }
+
+  get isRuning () {
+    return !!this.sensor.yxzbz
   }
 
   get ivolume () {
-    return this.volume
+    return this.getVolume
   }
 
   set ivolume (volume) {
@@ -147,7 +191,7 @@ export default class Home extends Vue {
   }
 
   get planedNum () {
-    return this.plan_quantity
+    return this.getPlaned
   }
 
   set planedNum (num) {
@@ -161,6 +205,24 @@ export default class Home extends Vue {
 
   clearClick () {
     this.clear = !this.clear
+  }
+
+  start () {
+    modbus
+      .writeState(modbus.CommandRegister.start)
+      .then(() => {
+        this.$message.success('success')
+      })
+      .catch((e) => this.$message.error(e.message))
+  }
+
+  reset () {
+    modbus
+      .writeState(modbus.CommandRegister.reset)
+      .then(() => {
+        this.$message.success('success')
+      })
+      .catch((e) => this.$message.error(e.message))
   }
 }
 </script>
