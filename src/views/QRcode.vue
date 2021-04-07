@@ -8,6 +8,7 @@
             <el-form
               :model="ruleForm"
               :rules="rules"
+              :disabled="isRuning"
               ref="ruleForm"
               label-width="100px"
             >
@@ -49,7 +50,7 @@
                 prop="create_time"
               >
                 <el-date-picker
-                  type="datetime"
+                  type="date"
                   class="content"
                   :placeholder="$tc('local.qrcode.newTag.note.created')"
                   v-model="ruleForm.create_time"
@@ -62,7 +63,7 @@
                 prop="effective"
               >
                 <el-date-picker
-                  type="datetime"
+                  type="date"
                   class="content"
                   value-format="timestamp"
                   :placeholder="$tc('local.qrcode.newTag.note.effective')"
@@ -96,6 +97,7 @@
                 v-t="{ path: 'local.qrcode.newTag.preview' }"
               ></el-button>
               <el-button
+                :disabled="isRuning"
                 @click="save('ruleForm')"
                 v-t="{ path: 'local.qrcode.newTag.save' }"
               ></el-button>
@@ -144,6 +146,7 @@
             <div :class="{ active: getChoiceTemplates === 1 }">
               <div class="label">{{ $t("local.qrcode.module.temp") }}1</div>
               <el-button
+                :disabled="isRuning"
                 @click="changeTemplate(1)"
                 v-t="{ path: 'local.qrcode.module.edit' }"
               ></el-button>
@@ -151,6 +154,7 @@
             <div :class="{ active: getChoiceTemplates === 2 }">
               <div class="label">{{ $t("local.qrcode.module.temp") }}2</div>
               <el-button
+                :disabled="isRuning"
                 @click="changeTemplate(2)"
                 v-t="{ path: 'local.qrcode.module.edit' }"
               ></el-button>
@@ -172,6 +176,7 @@
 
     <preview v-show="false" :param="ruleForm" ref="preview"></preview>
     <printDialog
+      :defaultPrint="getQRCode.name"
       :dialog-visible="printerDialogVisible"
       @cancel="handlePrintDialogCancel"
       @select-print="printSelectAfter"
@@ -351,6 +356,10 @@ export default class QRcode extends Vue {
     console.log(this.model)
   }
 
+  get isRuning () {
+    return !!this.getSensor.yxzbz
+  }
+
   mounted () {
     this.ruleForm = { ...this.getModel }
     // this.ruleForm.volume = this.volume
@@ -415,7 +424,7 @@ export default class QRcode extends Vue {
     .option {
       text-align: center;
       button {
-        width: 112px !important;
+        width: 140px !important;
         height: 40px !important;
         background: linear-gradient(0deg, #dd722a, #f86633) !important;
 

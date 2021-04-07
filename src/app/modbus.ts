@@ -105,10 +105,13 @@ export function writeVolume (volume: number) {
   return client.writeRegisters(baseAddr + Register.dfgzl, [volume])
 }
 export function writePlanedBags (num: number) {
-  return client.writeRegisters(baseAddr + Register.sjgzfs, [num])
+  return client.writeRegisters(baseAddr + Register.jhgzfs, [num])
 }
 export function writeMarked (state: boolean) {
   return client.writeRegisters(baseAddr + Register.sfdb, [state ? 1 : 0])
+}
+export function writeMarkOver () {
+  return client.writeRegisters(baseAddr + Register.scbq, [0])
 }
 
 export function writeState (cmd: CommandRegister) {

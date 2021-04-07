@@ -3,7 +3,11 @@
     <el-row class="containor" :gutter="25">
       <el-col :span="10">
         <block class="work" :title="$t('local.home.work')">
-          <div class="content">料袋缺料 尽快更换！</div>
+          <div
+            class="content"
+            :class="{ alarm: systemStatus > 1 }"
+            v-t="{ path: 'local.home.status.' + systemStatus }"
+          ></div>
         </block>
       </el-col>
       <el-col :span="14">
@@ -25,7 +29,9 @@
           <el-col :span="12">
             <block class="ceil" :title="$t('local.home.gzys')">
               <div class="ml">
-                <div class="content gzys">{{ fillingTime }}</div>
+                <div class="content gzys">
+                  {{ fillingTime | filterFillingTime }}
+                </div>
               </div>
             </block>
           </el-col>
@@ -49,7 +55,7 @@
             <block class="ceil" :title="$t('local.home.sjgzfs')">
               <div class="ml shiji">
                 <div class="content">
-                  {{ actual_quantity }}
+                  {{ actualQuantity }}
                   <span v-t="{ path: 'local.home.fenshu' }"></span>
                 </div>
                 <checkboxs
@@ -99,14 +105,37 @@
       </el-col>
     </el-row>
     <div class="option">
-      <el-button
+      <el-popconfirm
+        confirm-button-text="继续灌装"
+        cancel-button-text="重新灌装"
+        cancel-button-type="danger"
+        @confirm="actionContinue"
+        @cancel="actionRefilling"
+        :disabled="isRuning"
+        hide-icon
+        class="button"
+      >
+        <el-button
+          @click="start"
+          slot="reference"
+          class="iconfont icon-kaishi"
+          :class="{ disable: isRuning }"
+          v-t="{ path: 'local.home.start' }"
+        ></el-button>
+      </el-popconfirm>
+      <!-- <el-button
         @click="start"
-        class="iconfont icon-kaishi"
+        :disabled="isRuning"
+        class="iconfont icon-kaishi button"
+        :class="{ disable: isRuning }"
+        v-else
         v-t="{ path: 'local.home.start' }"
-      ></el-button>
+      ></el-button> -->
       <el-button
         @click="reset"
-        class="iconfont icon-Target disable"
+        :disabled="isRuning"
+        class="iconfont icon-Target"
+        :class="{ disable: isRuning }"
         v-t="{ path: 'local.home.stop' }"
       ></el-button>
     </div>
@@ -117,19 +146,28 @@
 import Block from '@/components/common/Blocks.vue'
 import Checkboxs from '@/components/common/Checkbox.vue'
 import moment from 'moment'
-import { Component, Prop, ModelSync, Vue } from 'vue-property-decorator'
+import { Component, Prop, ModelSync, Vue, Watch } from 'vue-property-decorator'
 
+import Worker, { WorkerParam } from '@/app/database/model/worker'
+import { QRCodeParam } from '@/app/database/model/qrcode'
 import * as modbus from '@/app/modbus'
 import { namespace } from 'vuex-class'
 import real from '@/store/model/real'
+import work from '@/store/model/work'
 const realModule = namespace('real')
 const qrcodeModule = namespace('qrcode')
 const workModule = namespace('work')
+const userModule = namespace('user')
 
 @Component({
   components: {
     Block,
     Checkboxs
+  },
+  filters: {
+    filterFillingTime (time: number) {
+      return moment(time - 8 * 3600 * 1000).format('HH:mm:ss')
+    }
   }
 })
 export default class Home extends Vue {
@@ -139,11 +177,20 @@ export default class Home extends Vue {
   @qrcodeModule.Action savePlaned!: (num: number) => void;
   @qrcodeModule.Getter getMarked!: boolean;
   @qrcodeModule.Action saveMarked!: (state: boolean) => void;
+  @qrcodeModule.Getter getModel!: QRCodeParam;
 
+  @workModule.State('id') workId!: number;
   @workModule.State create_time!: number;
   @workModule.State actual_quantity!: number;
+  @workModule.State hasAbnormal!: boolean;
+  @workModule.Action saveWork!: (param: typeof work.state) => void;
+  @workModule.Action saveHasAbnormal!: (param: boolean) => void;
+
+  @userModule.State username!: string;
 
   @realModule.State sensor!: typeof real.state.sensor;
+
+  private fillingTime = 0;
 
   clear = false;
   dabiaoClick (state: boolean) {
@@ -178,6 +225,14 @@ export default class Home extends Vue {
     return this.getMarked || false
   }
 
+  get systemStatus () {
+    return this.sensor.xtyxzt
+  }
+
+  get actualQuantity () {
+    return this.sensor.sjgzfs
+  }
+
   get isRuning () {
     return !!this.sensor.yxzbz
   }
@@ -198,22 +253,54 @@ export default class Home extends Vue {
     this.savePlaned(num)
   }
 
-  get fillingTime () {
-    const diff = moment().diff(this.create_time)
-    return moment(diff).format('HH:mm:ss')
-  }
-
   clearClick () {
     this.clear = !this.clear
   }
 
+  private runTimerHandler: null | NodeJS.Timeout = null;
   start () {
+    if (!this.hasAbnormal) {
+      this.actionStart()
+    }
+  }
+
+  actionStart () {
     modbus
       .writeState(modbus.CommandRegister.start)
       .then(() => {
         this.$message.success('success')
+        this.fillingTime = 0
+        const work = {
+          username: this.username,
+          jar_code: '',
+          boar_code: this.getModel.boar_code,
+          boar_varieties: this.getModel.boar_varieties,
+          volume: this.getModel.volume,
+          plan_quantity: this.getModel.plan_quantity,
+          actual_quantity: this.sensor.sjgzfs,
+          create_time: new Date().getTime()
+        }
+        const dbWork = new Worker(work)
+        console.log('开始运行')
+
+        dbWork.save().then((id) => {
+          this.saveWork({
+            ...work,
+            isMark: this.isMark,
+            hasAbnormal: false,
+            id
+          })
+        })
       })
       .catch((e) => this.$message.error(e.message))
+  }
+
+  actionContinue () {
+    console.log('actionContinue')
+  }
+
+  actionRefilling () {
+    console.log('actionRefilling')
   }
 
   reset () {
@@ -221,8 +308,48 @@ export default class Home extends Vue {
       .writeState(modbus.CommandRegister.reset)
       .then(() => {
         this.$message.success('success')
+        this.fillingTime = 0
       })
       .catch((e) => this.$message.error(e.message))
+  }
+
+  @Watch('sensor.yxzbz', { immediate: true })
+  private runControl (newValue: number, oldValue: number) {
+    if (newValue === 0) {
+      console.log('运行结束')
+
+      this.runTimerHandler && clearInterval(this.runTimerHandler)
+      this.fillingTime = 0
+      Worker.update(this.workId, { end_time: new Date().getTime(), status: 1 })
+    } else {
+      console.log('运行状态切换')
+      if (!this.runTimerHandler) {
+        console.log('防止页面切换')
+
+        this.runTimerHandler = setInterval(() => {
+          this.fillingTime = moment().diff(this.create_time)
+        }, 1000)
+      }
+    }
+  }
+
+  @Watch('sensor.xtyxzt', { immediate: true })
+  private runStatus (newValue: number) {
+    if (newValue > 1) {
+      console.log('运行异常', this.$tc('local.home.status.' + newValue))
+
+      this.runTimerHandler && clearInterval(this.runTimerHandler)
+      this.saveHasAbnormal(true)
+      Worker.update(this.workId, {
+        end_time: new Date().getTime(),
+        status: 2,
+        message: this.$tc('local.home.status.' + newValue)
+      })
+    }
+  }
+
+  private beforeDestory () {
+    this.runTimerHandler && clearInterval(this.runTimerHandler)
   }
 }
 </script>
@@ -249,8 +376,10 @@ export default class Home extends Vue {
       font-size: 20px;
       font-family: Microsoft YaHei;
       font-weight: bold;
-      color: #db2121;
       line-height: 64px;
+    }
+    .alarm {
+      color: #db2121;
     }
   }
 
@@ -358,7 +487,8 @@ export default class Home extends Vue {
 
   .option {
     overflow: hidden;
-    > button {
+    .button,
+    button {
       width: 190px !important;
       height: 55px !important;
       background-color: #fedb75;
@@ -372,6 +502,7 @@ export default class Home extends Vue {
       font-weight: 400;
       color: #000000;
       line-height: 30px;
+      text-align: center;
       &:first-child {
         // background-image: url("~@/assets/image/base64/图层 16.png");
         float: left;

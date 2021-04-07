@@ -1,7 +1,8 @@
 import { Commit } from 'vuex'
-import Worker from '@/app/database/model/woker'
+import Worker from '@/app/database/model/worker'
 
 const state = {
+  id: 0,
   username: '',
   jar_code: '',
   boar_code: '',
@@ -10,7 +11,8 @@ const state = {
   plan_quantity: 0,
   actual_quantity: 0,
   isMark: false,
-  create_time: 0
+  create_time: 0,
+  hasAbnormal: false // 有异常发生
 }
 
 const mutations = {
@@ -29,6 +31,9 @@ const mutations = {
   },
   saveMarked (states: typeof state, param: boolean) {
     states.isMark = param
+  },
+  saveHasAbnormal (states: typeof state, param: boolean) {
+    states.hasAbnormal = param
   }
 }
 
@@ -44,6 +49,9 @@ const actions = {
   },
   saveMarked (context: { commit: Commit }, params: boolean) {
     context.commit('saveMarked', params)
+  },
+  saveHasAbnormal (context: { commit: Commit }, params: boolean) {
+    context.commit('saveHasAbnormal', params)
   }
 }
 

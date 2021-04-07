@@ -55,10 +55,10 @@ export default class App extends Vue {
   private isLoginPage = false;
   private videoSrc = '';
   private readonly localSrc = path.join(__static, "./video/logo.mp4"); // eslint-disable-line
-  private isStart = process.env.NODE_ENV === 'production';
+  // private isStart = process.env.NODE_ENV !== "production";
   created () {
     let timehander: any = setTimeout(() => {
-      this.isStart = true
+      // this.isStart = true;
       const video = document.getElementById('video')
       const app = document.getElementById('app')
       video && video.remove()
@@ -97,7 +97,9 @@ export default class App extends Vue {
         }
 
         if (sensor.yxzbz && status.dabiao) {
-          this.preview.print(this.getQRCode.name)
+          this.preview.print(this.getQRCode.name).then(() => {
+            modbus.writeMarkOver()
+          })
         }
 
         this.saveSensor(sensor)

@@ -35,7 +35,7 @@ enum tables {
   print = 'print',
   qrcode = 'qr_code',
   user = 'user',
-  worker = 'woker'
+  worker = 'worker'
 }
 
 const dbPath = path.join(__static, '../static/db.db')

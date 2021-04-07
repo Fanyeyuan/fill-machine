@@ -72,7 +72,6 @@
         v-t="{ path: 'local.log.print' }"
       ></el-button>
       <el-button
-        class="disable"
         @click="ExportData"
         v-t="{ path: 'local.log.export' }"
       ></el-button>
@@ -96,7 +95,7 @@
 import path from 'path'
 import { remote } from 'electron'
 import { Component, Vue } from 'vue-property-decorator'
-import { WokerParam } from '@/app/database/model/woker'
+import { WorkerParam } from '@/app/database/model/worker'
 import PrintDialog from '@/components/common/PrintDialog.vue'
 import moment from 'moment'
 import CSV from '@/app/common/csv'
@@ -109,7 +108,7 @@ const { dialog, getCurrentWindow } = remote
 })
 export default class Log extends Vue {
   private fullPath = path.join(__static, "printRecord.html"); // eslint-disable-line
-  private optionLog: WokerParam[] = [];
+  private optionLog: WorkerParam[] = [];
   private currentPage = 1;
   private dialogVisible = false;
   private printDeviceName = '';

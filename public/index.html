@@ -16,9 +16,6 @@
         height: 100vh;
         background-color: black;
       }
-      #app{
-        display: none;
-      }
     </style>
   </head>
   <body>
@@ -34,18 +31,24 @@
   <script>
     const { ipcRenderer } = require('electron')
     const fs = require('fs')
+    const video = document.getElementById('video')
+    
+    if(process.env.NODE_ENV === "production"){
+      document.getElementById('app').style.display = 'none';
     ipcRenderer.send('get-video-url')
     ipcRenderer.once('get-video-url', (event, url) => {
       fs.readFile(url, (error, buf)=>{ // 读取文件，并将缓存区进行转换
         if(!error){
           const buff = Uint8Array.from(buf);
           const bolb = new Blob([buff]); // 转为一个新的Blob文件流
-          const video = document.getElementById('video')
           video.src = window.URL.createObjectURL(bolb); // 转换为url地址并直接给到audio
           // video.play()
         }
       });
     })
+    }else {
+      video.remove()
+    }
   </script>
   </body>
 </html>

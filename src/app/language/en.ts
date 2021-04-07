@@ -44,7 +44,23 @@ export default {
     gzys: 'filling time',
     sjgzfs: 'actual number',
     fksjwd: 'temperature',
-    dabiao: 'marking'
+    dabiao: 'marking',
+    status: {
+      0: 'Ready',
+      1: 'Cycling',
+      2: 'Labeling cylinder air pressure alarm',
+      3: 'Threading bag cylinder abnormal movement alarm',
+      4: 'Top mark cylinder abnormal movement alarm',
+      5: 'Filling cylinder abnormal movement alarm',
+      6: 'Emergency stop not reset',
+      7: 'Labeling cylinder abnormal movement alarm',
+      8: 'Label rotary cylinder abnormal movement alarm',
+      9: 'Tighten&Cutting cylinder abnormal movement alarm',
+      10: 'Moving bag cylinder abnormal movement alarm',
+      11: 'Alarm for lack of material bag',
+      12: 'System back in place',
+      13: 'low-pressure'
+    }
   },
   ready: {
     qgydjc: 'Cylinder monitoring',
@@ -82,7 +98,7 @@ export default {
       effective: 'Exp',
       qrcode: 'QRCode',
       preview: 'Preview',
-      save: 'Save',
+      save: 'Save&Enable',
 
       note: {
         company: 'please input manufacturer',
@@ -132,7 +148,11 @@ export default {
     gzsd: 'Filling speed',
     fkwd: 'Temperature',
     gzljz: 'Fill calibration',
-    glink: 'G-Link QRcode'
+    glink: 'G-Link QRcode',
+    upSuccess: 'Update success',
+    upFail: 'Update fail:',
+    saveSuccess: 'Save ok',
+    saveFail: 'Save error:'
   },
   log: {
     recode: 'Work Recording',

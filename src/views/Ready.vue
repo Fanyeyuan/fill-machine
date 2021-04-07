@@ -160,7 +160,7 @@ import * as modbus from '@/app/modbus'
 import { namespace } from 'vuex-class'
 import real from '@/store/model/real'
 const realModule = namespace('real')
-const workModule = namespace('work')
+const qrcodeModule = namespace('qrcode')
 
 @Component({
   components: {
@@ -171,7 +171,7 @@ const workModule = namespace('work')
 export default class Ready extends Vue {
   @realModule.State status!: typeof real.state.status;
   @realModule.State sensor!: typeof real.state.sensor;
-  @workModule.State volume!: number;
+  @qrcodeModule.Getter('getVolume') volume!: number;
 
   private sendcmd (cmd: string) {
     console.log(modbus.CommandRegister[cmd], cmd)

@@ -44,7 +44,23 @@ export default {
     gzys: '罐装用时',
     sjgzfs: '实际罐装份数',
     fksjwd: '封口实际温度',
-    dabiao: '打标'
+    dabiao: '打标',
+    status: {
+      0: '系统已准备好',
+      1: '自动循环中',
+      2: '抽真空气缸不合格',
+      3: '穿袋气缸不到位',
+      4: '顶标气缸不到位',
+      5: '罐装气缸不到位',
+      6: '急停未复位',
+      7: '贴标气缸不到位',
+      8: '贴标旋转气缸不到位',
+      9: '压紧裁切气缸不到位',
+      10: '移袋气缸不到位',
+      11: '料袋缺料报警',
+      12: '系统返回原位',
+      13: '气压低'
+    }
   },
   ready: {
     qgydjc: '气缸运动监测',
@@ -82,7 +98,7 @@ export default {
       effective: '有效日期',
       qrcode: '二维码内容',
       preview: '预览',
-      save: '保存',
+      save: '保存&启用',
 
       note: {
         company: '请输入生产单位名称',
@@ -132,7 +148,11 @@ export default {
     gzsd: '灌  装  速  度  ',
     fkwd: '封  口  温  度  ',
     gzljz: '灌 装 量 校 准  ',
-    glink: 'G-Link 二维码'
+    glink: 'G-Link 二维码',
+    upSuccess: '更新成功',
+    upFail: '更新失败,请稍后重试',
+    saveSuccess: '保存成功',
+    saveFail: '保存失败,请稍后重试'
   },
   log: {
     recode: '工作数据记录',

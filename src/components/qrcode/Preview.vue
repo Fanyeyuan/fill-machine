@@ -105,24 +105,34 @@ export default class Preview extends Vue {
   }
 
   print (dev_name: string) {
-    this.webview.addEventListener('ipc-message', (event) => {
-      if (event.channel === 'webview-print-do') {
-        this.webview.print({
-          silent: true,
-          dpi: {
-            horizontal: 203,
-            vertical: 203
-          },
-          printBackground: true,
-          deviceName: dev_name
-        })
-      }
-    })
-    // console.log(this.priviewHtml)
+    return new Promise((resolve, reject) => {
+      console.log(1)
 
-    this.webview.send('webview-print-render', {
-      printName: dev_name,
-      html: this.priviewHtml
+      this.webview.addEventListener('ipc-message', (event) => {
+        console.log(2)
+
+        if (event.channel === 'webview-print-do') {
+          console.log(3)
+
+          this.webview
+            .print({
+              silent: true,
+              dpi: {
+                horizontal: 203,
+                vertical: 203
+              },
+              printBackground: true,
+              deviceName: dev_name
+            })
+            .then(resolve)
+            .catch(reject)
+        }
+      })
+      // console.log(this.priviewHtml)
+      this.webview.send('webview-print-render', {
+        printName: dev_name,
+        html: this.priviewHtml
+      })
     })
   }
 }

@@ -29,6 +29,8 @@ const mutations = {
   saveSensor (states: typeof state, params: typeof state.sensor) {
     states.sensor.fksjwd = params.fksjwd
     states.sensor.sjgzfs = params.sjgzfs
+    states.sensor.xtyxzt = params.xtyxzt
+    states.sensor.yxzbz = params.yxzbz
   },
   saveStatus (states: typeof state, params: typeof state.status) {
     for (const key in params) {

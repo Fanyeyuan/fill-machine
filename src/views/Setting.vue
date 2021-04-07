@@ -6,42 +6,66 @@
           <div>
             <div class="label" v-t="{ path: 'local.setting.qgdzycsj' }"></div>
             <div class="in">
-              <el-input class="input" v-model="param.delay"></el-input>
+              <el-input
+                :disabled="isRuning"
+                class="input"
+                v-model="param.delay"
+              ></el-input>
               <div class="unit">S</div>
             </div>
           </div>
           <div>
             <div class="label" v-t="{ path: 'local.setting.qgdzbjsj' }"></div>
             <div class="in">
-              <el-input class="input" v-model="param.alarm"></el-input>
+              <el-input
+                :disabled="isRuning"
+                class="input"
+                v-model="param.alarm"
+              ></el-input>
               <div class="unit">S</div>
             </div>
           </div>
           <div>
             <div class="label" v-t="{ path: 'local.setting.gzsd' }"></div>
             <div class="in">
-              <el-input class="input" v-model="param.speed"></el-input>
+              <el-input
+                :disabled="isRuning"
+                class="input"
+                v-model="param.speed"
+              ></el-input>
               <div class="unit">R/S</div>
             </div>
           </div>
           <div>
             <div class="label" v-t="{ path: 'local.setting.fkwd' }"></div>
             <div class="in">
-              <el-input class="input" v-model="param.temperature"></el-input>
+              <el-input
+                :disabled="isRuning"
+                class="input"
+                v-model="param.temperature"
+              ></el-input>
               <div class="unit">℃</div>
             </div>
           </div>
           <div>
             <div class="label" v-t="{ path: 'local.setting.gzljz' }"></div>
             <div class="in">
-              <el-input class="input" v-model="param.jar"></el-input>
+              <el-input
+                :disabled="isRuning"
+                class="input"
+                v-model="param.jar"
+              ></el-input>
               <div class="unit"></div>
             </div>
           </div>
           <div>
             <div class="label" v-t="{ path: 'local.setting.glink' }"></div>
             <div class="in">
-              <el-input class="input" v-model="param.id"></el-input>
+              <el-input
+                :disabled="isRuning"
+                class="input"
+                v-model="param.id"
+              ></el-input>
               <div class="unit"></div>
             </div>
           </div>
@@ -53,6 +77,7 @@
     </el-row>
     <div class="save">
       <el-button
+        :disabled="isRuning"
         class="iconfont icon-baocun"
         @click="SaveParams"
         v-t="{ path: 'local.setting.save' }"
@@ -66,7 +91,9 @@ import { Component, Vue } from 'vue-property-decorator'
 import { writeParam } from '@/app/modbus'
 
 import Param from '@/app/database/model/param'
+import real from '@/store/model/real'
 import { namespace } from 'vuex-class'
+const realModule = namespace('real')
 const paramModule = namespace('param')
 
 @Component
@@ -78,6 +105,8 @@ export default class Setting extends Vue {
   @paramModule.State speed!: number;
   @paramModule.State temperature!: number;
   @paramModule.State jar!: number;
+
+  @realModule.State sensor!: typeof real.state.sensor;
 
   private param = {
     delay: this.delay,
@@ -99,8 +128,6 @@ export default class Setting extends Vue {
 
   private async SaveParams () {
     try {
-      console.log(this.param, this.id, this.alarm)
-
       this.saveParam(this.param)
       await writeParam([
         this.temperature,
@@ -115,25 +142,33 @@ export default class Setting extends Vue {
           new Param(param[0])
             .update(this.param)
             .then((value) => {
-              this.$message.success('更新成功')
+              this.$message.success(this.$tc('local.setting.upSuccess'))
             })
             .catch((err) => {
-              this.$message.error('更新失败,请稍后重试' + err.message)
+              this.$message.error(
+                this.$tc('local.setting.upFail') + err.message
+              )
             })
         } else {
           new Param(this.param)
             .save()
             .then((value) => {
-              this.$message.success('保存成功')
+              this.$message.success(this.$tc('local.setting.saveSuccess'))
             })
             .catch((err) => {
-              this.$message.error('保存失败,请稍后重试' + err.message)
+              this.$message.error(
+                this.$tc('local.setting.saveFail') + err.message
+              )
             })
         }
       })
     } catch (e) {
       this.$message.error(e.message)
     }
+  }
+
+  get isRuning () {
+    return !!this.sensor.yxzbz
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div v-if="printList">
     <el-dialog
-      width="300px"
+      width="350px"
       :visible="dialogVisible"
       :append-to-body="true"
       :show-close="false"
@@ -48,12 +48,9 @@ import { ipcRenderer } from 'electron'
 @Component
 export default class PrintDialog extends Vue {
   @Prop({ type: Boolean, default: false }) private dialogVisible!: boolean;
+  @Prop({ type: String, default: '' }) defaultPrint!: string;
   private rowData!: [];
   private printList: any[] = [];
-
-  private get defaultPrint () {
-    return ''
-  }
 
   @Watch('dialogVisible', { immediate: true })
   getPrintListHandle (dialogVisible: boolean) {
