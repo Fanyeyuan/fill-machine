@@ -141,7 +141,7 @@ export default class Setting extends Vue {
         if (param.length) {
           new Param(param[0])
             .update(this.param)
-            .then((value) => {
+            .then(() => {
               this.$message.success(this.$tc('local.setting.upSuccess'))
             })
             .catch((err) => {
@@ -152,7 +152,7 @@ export default class Setting extends Vue {
         } else {
           new Param(this.param)
             .save()
-            .then((value) => {
+            .then(() => {
               this.$message.success(this.$tc('local.setting.saveSuccess'))
             })
             .catch((err) => {

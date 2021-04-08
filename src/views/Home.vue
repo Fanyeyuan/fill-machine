@@ -111,30 +111,23 @@
         cancel-button-type="danger"
         @confirm="actionContinue"
         @cancel="actionRefilling"
-        :disabled="isRuning"
         hide-icon
-        class="button"
+        class="left"
       >
-        <el-button
-          @click="start"
-          slot="reference"
-          class="iconfont icon-kaishi"
-          :class="{ disable: isRuning }"
-          v-t="{ path: 'local.home.start' }"
-        ></el-button>
+        <div slot="reference">
+          <el-button
+            @click="start"
+            class="iconfont icon-kaishi"
+            :disabled="isRuning"
+            :class="{ disable: isRuning }"
+            v-t="{ path: 'local.home.start' }"
+          ></el-button>
+        </div>
       </el-popconfirm>
-      <!-- <el-button
-        @click="start"
-        :disabled="isRuning"
-        class="iconfont icon-kaishi button"
-        :class="{ disable: isRuning }"
-        v-else
-        v-t="{ path: 'local.home.start' }"
-      ></el-button> -->
       <el-button
         @click="reset"
         :disabled="isRuning"
-        class="iconfont icon-Target"
+        class="iconfont icon-Target right"
         :class="{ disable: isRuning }"
         v-t="{ path: 'local.home.stop' }"
       ></el-button>
@@ -258,9 +251,10 @@ export default class Home extends Vue {
   }
 
   private runTimerHandler: null | NodeJS.Timeout = null;
-  start () {
+  start (e: Event) {
     if (!this.hasAbnormal) {
       this.actionStart()
+      e.stopPropagation()
     }
   }
 
@@ -315,30 +309,27 @@ export default class Home extends Vue {
 
   @Watch('sensor.yxzbz', { immediate: true })
   private runControl (newValue: number, oldValue: number) {
-    if (newValue === 0) {
+    if (this.runTimerHandler && newValue === 0) {
       console.log('运行结束')
 
-      this.runTimerHandler && clearInterval(this.runTimerHandler)
+      clearInterval(this.runTimerHandler)
       this.fillingTime = 0
       Worker.update(this.workId, { end_time: new Date().getTime(), status: 1 })
     } else {
       console.log('运行状态切换')
-      if (!this.runTimerHandler) {
-        console.log('防止页面切换')
 
-        this.runTimerHandler = setInterval(() => {
-          this.fillingTime = moment().diff(this.create_time)
-        }, 1000)
-      }
+      this.runTimerHandler = setInterval(() => {
+        this.fillingTime = moment().diff(this.create_time)
+      }, 1000)
     }
   }
 
   @Watch('sensor.xtyxzt', { immediate: true })
   private runStatus (newValue: number) {
-    if (newValue > 1) {
+    if (this.runTimerHandler && newValue > 1) {
       console.log('运行异常', this.$tc('local.home.status.' + newValue))
 
-      this.runTimerHandler && clearInterval(this.runTimerHandler)
+      clearInterval(this.runTimerHandler)
       this.saveHasAbnormal(true)
       Worker.update(this.workId, {
         end_time: new Date().getTime(),
@@ -487,7 +478,7 @@ export default class Home extends Vue {
 
   .option {
     overflow: hidden;
-    .button,
+
     button {
       width: 190px !important;
       height: 55px !important;
@@ -503,14 +494,14 @@ export default class Home extends Vue {
       color: #000000;
       line-height: 30px;
       text-align: center;
-      &:first-child {
-        // background-image: url("~@/assets/image/base64/图层 16.png");
-        float: left;
-      }
-      &:last-child {
-        // background-image: url("~@/assets/image/base64/图层 15.png");
-        float: right;
-      }
+    }
+    .left {
+      // background-image: url("~@/assets/image/base64/图层 16.png");
+      float: left;
+    }
+    .right {
+      // background-image: url("~@/assets/image/base64/图层 15.png");
+      float: right;
     }
     .disable {
       background: linear-gradient(255deg, #c2c2c2, #7d7c7c, #c2c2c2) no-repeat !important;
