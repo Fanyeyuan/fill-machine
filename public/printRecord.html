@@ -13,38 +13,101 @@
         font-family: Avenir, Helvetica, Arial, sans-serif;
       }
 
-      @page {
-        margin: 0 0 0 14px;
+      /* @page {
+        margin: 0 0 0 0px;
+      } */
+      .table{
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+        border-top: 1px solid black;
+        border-left: 1px solid black;
+        font-size: 10px;
+        word-wrap: break-word;
       }
-      .table{width:259px;height:145px;border:1px solid #000000}
-      .table .company{height:16px;font-family:Microsoft YaHei;font-weight:bold;color:#000000;font-size:12px;line-height:16px;text-align:center;padding:1px;border-bottom:1px solid #000000}
-      .table .content{overflow:hidden}
-      .table .content .left{float:left;border-right:1px solid #000}
-      .table .content .left .message{width:166px;height:25px;border-bottom:1px solid #000000}
-      .table .content .left .message:last-of-type{border:0}
-      .table .content .left .message span{display:inline-block;box-sizing:border-box}
-      .table .content .left .message span:first-of-type{width:64px;font-size:12px;line-height:25px;font-weight:bold;padding:2px 3px}
-      .table .content .left .message span:last-of-type{width:102px;vertical-align:middle;font-size:10px;font-weight:400;text-align:inherit;word-break:break-all;}
-      .table .content .right{float:right}
-      .table .content .right .qrcodes{margin:17px 0;width:92px;height:92px;background-color:black}
+      .table #title >div,.table .row >div{
+        box-sizing: border-box;
+        border-bottom: 1px solid black;
+        border-right: 1px solid black;
+      }
+      .table #title,.table #content .row{
+        display: flex;
+      }
+      .table .col1{width: 6%}
+      .table .col2{width: 6%;}
+      .table .col3{width: 10%}
+      .table .col4{width: 10%}
+      .table .col5{width: 10%}
+      .table .col6{width: 8%}
+      .table .col7{width: 8%}
+      .table .col8{width: 8%;}
+      .table .col9{width: 10%;}
+      .table .col10{width: 10%;}
+      .table .col11{width: 4%;}
+      .table .col12{width: 18%;}
     </style>
   </head>
 
   <body>
+    <div class="table">
+      <div id="title">
+          <div class="col1">t1</div>
+          <div class="col2">t2</div>
+          <div class="col3">t3</div>
+          <div class="col4">t4</div>
+          <div class="col5">t5</div>
+          <div class="col6">t6</div>
+          <div class="col7">t7</div>
+          <div class="col8">t8</div>
+          <div class="col9">t9</div>
+          <div class="col10">t10</div>
+          <div class="col11">t11</div>
+          <div class="col12">t12</div>
+      </div>
+      <div id="content">
+        <!-- <div class="row">
+          <div class="col1">5dfa1</div>
+          <div class="col2">5dfa2</div>
+          <div class="col3">5dfa3</div>
+          <div class="col4">5dfa4</div>
+          <div class="col5">5dfa5</div>
+          <div class="col6">5dfa6</div>
+          <div class="col7">5dfa7</div>
+          <div class="col8">5dfa8</div>
+          <div class="col9">5dfa9</div>
+          <div class="col10">5dfa10</div>
+          <div class="col11">5dfa11</div>
+          <div class="col12">5dfa12</div>
+        </div> -->
+      </div>
+    </div>
   </body>
 
   <script>
     const { ipcRenderer } = require('electron')
     ipcRenderer.on('webview-print-render', (event, info) => {
-      const body = document.getElementsByTagName('body')[0]
-      body.innerHTML = info.html
+      const title = document.getElementById('title')
+      const content = document.getElementById('content')
+      document.title = info.header
+
+      const titles = info.title
+      Object.keys(titles).forEach((key, index) => {
+        title.children[index].innerHTML = titles[key]
+      })
+
+      info.content.forEach(data => {
+        let row = document.createElement('div')
+        row.className = 'row'
+        Object.keys(data).forEach((key, index) => {
+          let col = document.createElement('div')
+          col.innerHTML = data[key]
+          col.className = 'col'+(index+1)
+          row.appendChild(col)
+        })
+        content.appendChild(row)
+      })
+
       ipcRenderer.sendToHost('webview-print-do')
-    })
-    ipcRenderer.on('get-printer-list', (event, info) => {
-      console.log(event);
-      const { sender } = event
-      const list = sender.getPrinters()
-      sender.send('getPrinterList', list)
     })
   </script>
 </html>

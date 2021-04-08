@@ -4,7 +4,7 @@
       <div class="header" v-t="{ path: 'local.log.recode' }"></div>
       <div class="table">
         <el-table
-          :data="optionLog"
+          :data="getOptionLog"
           :max-height="330"
           border
           stripe
@@ -39,7 +39,7 @@
           <el-table-column :label="$t('local.log.time')">
             <template slot-scope="scope">
               <span style="margin-left: 10px">{{
-                scope.row.end_time - scope.row.create_time
+                (scope.row.end_time - scope.row.create_time) | filterFillingTime
               }}</span>
             </template></el-table-column
           >
@@ -50,11 +50,10 @@
         background
         layout="slot, prev, pager, next"
         :current-page.sync="currentPage"
-        :total="1000"
+        :total="getOptionTotal"
         :pager-count="5"
         :prev-text="$t('local.log.prev')"
         :next-text="$t('local.log.next')"
-        @current-change="changePage"
       >
         <slot>
           <el-button
@@ -93,9 +92,9 @@
 
 <script lang="ts">
 import path from 'path'
-import { remote } from 'electron'
-import { Component, Vue } from 'vue-property-decorator'
-import { WorkerParam } from '@/app/database/model/worker'
+import { remote, WebviewTag } from 'electron'
+import { Component, Ref, Vue } from 'vue-property-decorator'
+import Worker, { WorkerParam } from '@/app/database/model/worker'
 import PrintDialog from '@/components/common/PrintDialog.vue'
 import moment from 'moment'
 import CSV from '@/app/common/csv'
@@ -104,52 +103,25 @@ const { dialog, getCurrentWindow } = remote
 @Component({
   components: {
     PrintDialog
+  },
+  filters: {
+    filterFillingTime (ms: number) {
+      return Math.ceil(ms / 60000)
+    }
   }
 })
 export default class Log extends Vue {
+  @Ref('printWebview') readonly webview!: WebviewTag;
   private fullPath = path.join(__static, "printRecord.html"); // eslint-disable-line
   private optionLog: WorkerParam[] = [];
   private currentPage = 1;
   private dialogVisible = false;
   private printDeviceName = '';
 
-  mounted () {
-    this.optionLog = new Array(10).fill(0).map((value, index) => {
-      return {
-        id: index + 1,
-        username: '',
-        jar_code: 'a' + index,
-        boar_code: 'b' + index,
-        boar_varieties: 'c' + index,
-        volume: 100,
-        plan_quantity: 1000,
-        actual_quantity: 100,
-        create_time: 0,
-        end_time: 100,
-        status: 1,
-        message: '0'
-      }
-    })
+  async mounted () {
+    const work = await Worker.all()
+    this.optionLog = work.filter((value) => value.status && value.status > 0)
     // console.log(this.optionLog);
-  }
-
-  changePage () {
-    this.optionLog = new Array(10).fill(0).map((value, index) => {
-      return {
-        id: index + 1,
-        username: '',
-        jar_code: 'afdsrfewrdsfdsdasadse' + this.currentPage * 29032,
-        boar_code: 'adawqedasdadxzcsadfasdd' + this.currentPage,
-        boar_varieties: 'd' + this.currentPage,
-        volume: 100 + this.currentPage,
-        plan_quantity: 1000 + this.currentPage,
-        actual_quantity: 100 + this.currentPage,
-        create_time: 0,
-        end_time: 100,
-        status: 1,
-        message: '0'
-      }
-    })
   }
 
   private RecodePrint () {
@@ -167,22 +139,46 @@ export default class Log extends Vue {
     this.printDeviceName = val.name
     console.log(this.printDeviceName)
 
-    // this.printRender()
+    this.printRender(this.printDeviceName)
+  }
+
+  printRender (printer: string) {
+    this.webview.addEventListener('ipc-message', (event) => {
+      if (event.channel === 'webview-print-do') {
+        console.log(printer)
+
+        this.webview.print({
+          silent: true,
+          landscape: true,
+          header: 'cs',
+          printBackground: true,
+          deviceName: printer
+        })
+      }
+    })
+    this.webview
+      .send('webview-print-render', {
+        printName: printer,
+        header: this.$tc('local.log.recode'),
+        title: this.title,
+        content: this.optionLog
+      })
+      .then(console.log)
   }
 
   private readonly title = {
-    id: '序号',
-    username: '用户名',
-    jar_code: '灌装编号',
-    boar_code: '公猪编号',
-    boar_varieties: '品名品系',
-    volume: '灌装量',
-    plan_quantity: '疾患灌装量',
-    actual_quantity: '实际灌装量',
-    create_time: '开始时间',
-    end_time: '结束时间',
-    status: '状态',
-    message: '原因'
+    id: this.$t('local.log.index'),
+    username: this.$t('local.log.username'),
+    jar_code: this.$t('local.log.jar_code'),
+    boar_code: this.$t('local.log.boar_code'),
+    boar_varieties: this.$t('local.log.boar_varieties'),
+    volume: this.$t('local.log.volume'),
+    plan_quantity: this.$t('local.log.plan_quantity'),
+    actual_quantity: this.$t('local.log.actual_quantity'),
+    create_time: this.$t('local.log.create_time'),
+    end_time: this.$t('local.log.end_time'),
+    status: this.$t('local.log.status'),
+    message: this.$t('local.log.message')
   };
 
   ExportData () {
@@ -202,15 +198,20 @@ export default class Log extends Vue {
       .then((choice) => {
         if (!choice.canceled) {
           if (choice.filePath) {
-            const csv = new CSV(
-              choice.filePath,
-              JSON.stringify(this.title),
-              this.optionLog
-            )
-            csv.WriteDecoderLog(1)
+            const csv = new CSV(choice.filePath, this.title, this.optionLog)
+            csv.WriteDecoderLog()
           }
         }
       })
+  }
+
+  get getOptionLog () {
+    const start = 10 * (this.currentPage - 1)
+    return this.optionLog.slice(start, start + 10)
+  }
+
+  get getOptionTotal () {
+    return this.optionLog.length
   }
 }
 </script>

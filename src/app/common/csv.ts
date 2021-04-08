@@ -4,22 +4,21 @@ const fs = remote.require('fs')
 export default class CSV {
   objsArray: any[]
   decoderLogPath: string
-  jsonPath: string
-  constructor (path: string, jsonPath: string, objsArr: any[]) {
+  title: Record<string, any>
+  constructor (path: string, title: Record<string, any>, objsArr: any[]) {
     this.objsArray = objsArr // 存储数据数组
     this.decoderLogPath = path // .csv路径
-    this.jsonPath = jsonPath // json数据
+    this.title = title // json数据
 
-    this._InitDecoderLogFeild(this.objsArray, this.jsonPath) // 初始化方法
+    this._InitDecoderLogFeild(this.title) // 初始化方法
   }
 
-  WriteDecoderLog (dateTime: number) {
+  WriteDecoderLog () {
     // 遍历存储数据数组所有对象
     this.objsArray.forEach(element => {
       const array = []
       for (const item in element) {
         array.push(element[item])
-        // console.log(item, element[item]);
       }
       // 关键一句，否则不会换行
       array.push('\r\n')
@@ -35,20 +34,12 @@ export default class CSV {
     })
   }
 
-  _InitDecoderLogFeild (objsArr: any[], jsonPath: string) {
+  _InitDecoderLogFeild (title: Record<string, any>) {
     const array = []
-    let jsonObj: any = null
-
-    // 第一个字段为时间
-
-    // array.push("时间");
-
-    // 通过json文件，获取变量所对应头名称
-    jsonObj = JSON.parse(jsonPath) // 读取的值
 
     // 遍历头名称数组对象
-    Object.keys(jsonObj).forEach(item => {
-      array.push(jsonObj[item])
+    Object.keys(title).forEach(item => {
+      array.push(title[item])
     })
 
     array.push('\r\n')

@@ -293,9 +293,6 @@ export default class Home extends Vue {
     !this.sensor.yxzbz &&
       modbus
         .writeState(modbus.CommandRegister.jxgz)
-        .then(() => {
-          this.fillingTime = 0
-        })
         .catch((e) => this.$message.error(e.message))
   }
 
