@@ -45,6 +45,8 @@ export default {
     sjgzfs: '实际罐装份数',
     fksjwd: '封口实际温度',
     dabiao: '打标',
+    continue: '继续灌装',
+    restart: '重新灌装',
     status: {
       0: '系统已准备好',
       1: '自动循环中',

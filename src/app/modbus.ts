@@ -41,7 +41,9 @@ export enum CommandRegister{
   br = 31, // 泵入
   bc, // 泵出
   ydxh = 41, // 移袋循环
-  gzxh// 灌装循环
+  gzxh, // 灌装循环
+  cxgz = 51, // 移袋循环
+  jxgz, // 灌装循环
 }
 
 export enum Register{

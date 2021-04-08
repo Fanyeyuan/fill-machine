@@ -106,8 +106,8 @@
     </el-row>
     <div class="option">
       <el-popconfirm
-        confirm-button-text="继续灌装"
-        cancel-button-text="重新灌装"
+        :confirm-button-text="$tc('local.home.continue')"
+        :cancel-button-text="$tc('local.home.restart')"
         cancel-button-type="danger"
         @confirm="actionContinue"
         @cancel="actionRefilling"
@@ -253,55 +253,67 @@ export default class Home extends Vue {
   private runTimerHandler: null | NodeJS.Timeout = null;
   start (e: Event) {
     if (!this.hasAbnormal) {
-      this.actionStart()
+      !this.sensor.yxzbz &&
+        modbus
+          .writeState(modbus.CommandRegister.start)
+          .then(() => {
+            this.fillingTime = 0
+            this.actionStart()
+          })
+          .catch((e) => this.$message.error(e.message))
       e.stopPropagation()
     }
   }
 
   actionStart () {
-    modbus
-      .writeState(modbus.CommandRegister.start)
-      .then(() => {
-        this.$message.success('success')
-        this.fillingTime = 0
-        const work = {
-          username: this.username,
-          jar_code: '',
-          boar_code: this.getModel.boar_code,
-          boar_varieties: this.getModel.boar_varieties,
-          volume: this.getModel.volume,
-          plan_quantity: this.getModel.plan_quantity,
-          actual_quantity: this.sensor.sjgzfs,
-          create_time: new Date().getTime()
-        }
-        const dbWork = new Worker(work)
-        console.log('开始运行')
+    const work = {
+      username: this.username,
+      jar_code: '',
+      boar_code: this.getModel.boar_code,
+      boar_varieties: this.getModel.boar_varieties,
+      volume: this.getModel.volume,
+      plan_quantity: this.getModel.plan_quantity,
+      actual_quantity: this.sensor.sjgzfs,
+      create_time: new Date().getTime()
+    }
+    const dbWork = new Worker(work)
+    console.log('开始运行')
 
-        dbWork.save().then((id) => {
-          this.saveWork({
-            ...work,
-            isMark: this.isMark,
-            hasAbnormal: false,
-            id
-          })
-        })
+    dbWork.save().then((id) => {
+      this.saveWork({
+        ...work,
+        isMark: this.isMark,
+        hasAbnormal: false,
+        id
       })
-      .catch((e) => this.$message.error(e.message))
+    })
   }
 
   actionContinue () {
-    console.log('actionContinue')
+    !this.sensor.yxzbz &&
+      modbus
+        .writeState(modbus.CommandRegister.jxgz)
+        .then(() => {
+          this.fillingTime = 0
+        })
+        .catch((e) => this.$message.error(e.message))
   }
 
   actionRefilling () {
-    console.log('actionRefilling')
+    !this.sensor.yxzbz &&
+      modbus
+        .writeState(modbus.CommandRegister.cxgz)
+        .then(() => {
+          this.fillingTime = 0
+          this.actionStart()
+        })
+        .catch((e) => this.$message.error(e.message))
   }
 
   reset () {
     modbus
       .writeState(modbus.CommandRegister.reset)
       .then(() => {
-        this.$message.success('success')
         this.fillingTime = 0
       })
       .catch((e) => this.$message.error(e.message))

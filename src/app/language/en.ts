@@ -45,6 +45,8 @@ export default {
     sjgzfs: 'actual number',
     fksjwd: 'temperature',
     dabiao: 'marking',
+    continue: 'continue',
+    restart: 'restart',
     status: {
       0: 'Ready',
       1: 'Cycling',
